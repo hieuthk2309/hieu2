@@ -11,15 +11,15 @@ export async function GET(request: NextRequest) {
   const lastOrderDate = request.cookies.get('last_order_date')?.value
   const lastOrderId = request.cookies.get('last_order_id')?.value
   const today = getTodayString()
-  
+
   const canOrder = lastOrderDate !== today
 
   return NextResponse.json({
     canOrder,
     lastOrderDate: lastOrderDate || null,
     lastOrderId: lastOrderId || null,
-    message: canOrder 
-      ? 'Ban co the dat hang' 
-      : 'Ban da dat hang hom nay roi. Vui long quay lai vao ngay mai!'
+    message: canOrder
+      ? 'Ban co the dat hang'
+      : 'Ban da dat hang hom nay roi. Vui long quay lai vao ngay mai nhe!'
   })
 }
