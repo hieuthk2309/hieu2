@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getOrderById } from '@/lib/db'
 
 // Helper function to get today's date string (YYYY-MM-DD)
-function getTodayString(): string {
+export function getTodayString(): string {
   const today = new Date()
   return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
 }
@@ -12,7 +13,13 @@ export async function GET(request: NextRequest) {
   const lastOrderId = request.cookies.get('last_order_id')?.value
   const today = getTodayString()
 
-  const canOrder = lastOrderDate !== today
+  let canOrder = lastOrderDate !== today
+
+  // Nếu cookie báo đã đặt, nhưng DB bị reset mất đơn -> Cho phép đặt lại
+  if (!canOrder && lastOrderId) {
+    const orderExists = await getOrderById(parseInt(lastOrderId, 10))
+    if (!orderExists) canOrder = true
+  }
 
   return NextResponse.json({
     canOrder,

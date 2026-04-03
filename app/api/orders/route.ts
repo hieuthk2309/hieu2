@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createOrder, createOrderItems, getAllOrders } from '@/lib/db'
+import { createOrder, createOrderItems, getAllOrders, getOrderById } from '@/lib/db'
 import { z } from 'zod'
 
 // Validation schema for order
@@ -30,13 +30,22 @@ export async function POST(request: NextRequest) {
   try {
     // Check if user already ordered today
     const lastOrderDate = request.cookies.get('last_order_date')?.value
+    const lastOrderId = request.cookies.get('last_order_id')?.value
     const today = getTodayString()
 
     if (lastOrderDate === today) {
-      return NextResponse.json(
-        { error: 'Bạn đã đặt hàng hôm nay rồi. Vui lòng quay lại vào ngày mai!' },
-        { status: 429 }
-      )
+      let hasRealOrder = true
+      if (lastOrderId) {
+        const orderExists = await getOrderById(parseInt(lastOrderId, 10))
+        if (!orderExists) hasRealOrder = false
+      }
+      
+      if (hasRealOrder) {
+        return NextResponse.json(
+          { error: 'Bạn đã đặt hàng hôm nay rồi. Vui lòng quay lại vào ngày mai!' },
+          { status: 429 }
+        )
+      }
     }
 
     const body = await request.json()

@@ -14,3 +14,9 @@ next.user-config.*
 node_modules
 .next/
 .DS_Store
+
+# Chặn toàn bộ thư mục data
+data/
+# Hoặc cụ thể hơn cho các file sqlite
+*.db
+*.db-journal
