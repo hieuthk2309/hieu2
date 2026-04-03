@@ -52,7 +52,9 @@ export function MenuSection() {
         {/* Menu Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredItems.map((item) => (
-            <MenuCard key={item.id} item={item} onAddClick={handleAddClick} />
+            <div key={item.id} className="flex">
+              <MenuCard item={item} onAddClick={handleAddClick} />
+            </div>
           ))}
         </div>
 

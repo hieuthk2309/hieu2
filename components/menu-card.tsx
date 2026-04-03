@@ -19,7 +19,7 @@ export function MenuCard({ item, onAddClick }: MenuCardProps) {
   }
 
   return (
-    <Card className="overflow-hidden group hover:shadow-lg transition-shadow duration-300">
+    <Card className="overflow-hidden group hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
           <span className="text-6xl">🥖</span>
@@ -31,14 +31,14 @@ export function MenuCard({ item, onAddClick }: MenuCardProps) {
           </div>
         )}
       </div>
-      <CardContent className="p-4">
+      <CardContent className="p-4 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-2 mb-2">
           <h3 className="font-semibold text-foreground leading-tight">{item.name}</h3>
           <span className="text-primary font-bold whitespace-nowrap">
             {formatPrice(item.price)}
           </span>
         </div>
-        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+        <p className="text-sm text-muted-foreground mb-4 line-clamp-2 flex-1">
           {item.description}
         </p>
         <Button

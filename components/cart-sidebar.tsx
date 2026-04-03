@@ -48,21 +48,21 @@ export function CartSidebar({ open, onClose, onCheckout }: CartSidebarProps) {
 
         {items.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center py-12">
-            <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-4">
-              <ShoppingBag className="w-10 h-10 text-muted-foreground" />
+            <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6 animate-pulse">
+              <ShoppingBag className="w-12 h-12 text-primary/60" />
             </div>
-            <h3 className="font-semibold text-foreground mb-2">Giỏ hàng trống</h3>
-            <p className="text-sm text-muted-foreground">
-              Thêm bánh mì vào giỏ để đặt hàng
+            <h3 className="text-lg font-bold text-foreground mb-2 tracking-tight">Giỏ hàng đang trống</h3>
+            <p className="text-sm text-muted-foreground w-3/4 mx-auto leading-relaxed">
+              Hãy chọn ngay một ổ bánh mì Sài Gòn thật giòn ngon để tiến hành đặt hàng nhé!
             </p>
           </div>
         ) : (
           <>
-            <div className="flex-1 overflow-auto py-4 space-y-4">
+            <div className="flex-1 overflow-auto py-4 space-y-4 px-1">
               {items.map((item, index) => (
                 <div
                   key={index}
-                  className="bg-muted/50 rounded-lg p-4 space-y-3"
+                  className="bg-card border border-border/40 rounded-2xl p-4 space-y-3 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-300"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -90,26 +90,26 @@ export function CartSidebar({ open, onClose, onCheckout }: CartSidebarProps) {
                     </Button>
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-center gap-1 bg-muted/30 p-1 rounded-full border border-border/40">
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-8 w-8 rounded-full hover:bg-background hover:shadow-sm"
                         onClick={() => updateQuantity(index, item.quantity - 1)}
                       >
-                        <Minus className="w-4 h-4" />
+                        <Minus className="w-3.5 h-3.5" />
                       </Button>
-                      <span className="w-8 text-center font-semibold text-foreground">
+                      <span className="w-8 text-center font-bold text-foreground tabular-nums">
                         {item.quantity}
                       </span>
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-8 w-8 rounded-full hover:bg-background hover:shadow-sm"
                         onClick={() => updateQuantity(index, item.quantity + 1)}
                       >
-                        <Plus className="w-4 h-4" />
+                        <Plus className="w-3.5 h-3.5" />
                       </Button>
                     </div>
                     <span className="font-bold text-primary">
@@ -120,26 +120,24 @@ export function CartSidebar({ open, onClose, onCheckout }: CartSidebarProps) {
               ))}
             </div>
 
-            {/* Footer */}
-            <div className="border-t border-border pt-4 space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Tổng cộng</span>
-                <span className="text-xl font-bold text-foreground">
+            <div className="border-t border-border pt-6 pb-2 space-y-5">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-muted-foreground font-medium">Tổng cộng</span>
+                <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-orange-500">
                   {formatPrice(totalPrice)}
                 </span>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <Button
                   variant="outline"
-                  className="flex-1"
+                  className="flex-[0.4] rounded-xl border-border/50 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors"
                   onClick={clearCart}
                 >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Xóa Tất Cả
+                  <Trash2 className="w-4 h-4" />
                 </Button>
-                <Button className="flex-1" onClick={onCheckout}>
-                  Đặt Hàng
+                <Button className="flex-1 rounded-xl font-bold text-md shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all duration-300" onClick={onCheckout}>
+                  Tiến Hành Đặt Hàng
                 </Button>
               </div>
             </div>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getOrderById, updateOrderStatus } from '@/lib/db'
+import { getOrderById, updateOrderStatus, updateOrderItemNote } from '@/lib/db'
 import { z } from 'zod'
 
 // GET - Get order by ID
@@ -37,9 +37,14 @@ export async function GET(
   }
 }
 
-// PATCH - Update order status
+// PATCH - Update order status OR order item note
 const UpdateStatusSchema = z.object({
   status: z.enum(['pending', 'confirmed', 'preparing', 'delivering', 'completed', 'cancelled']),
+})
+
+const UpdateItemNoteSchema = z.object({
+  itemId: z.number(),
+  notes: z.string(),
 })
 
 export async function PATCH(
@@ -58,11 +63,23 @@ export async function PATCH(
     }
 
     const body = await request.json()
-    const validationResult = UpdateStatusSchema.safeParse(body)
 
-    if (!validationResult.success) {
+    // Handle item note update
+    const noteValidation = UpdateItemNoteSchema.safeParse(body)
+    if (noteValidation.success) {
+      const { itemId, notes } = noteValidation.data
+      await updateOrderItemNote(itemId, notes)
+      return NextResponse.json({
+        success: true,
+        message: 'Cập nhật ghi chú thành công',
+      })
+    }
+
+    // Handle status update
+    const statusValidation = UpdateStatusSchema.safeParse(body)
+    if (!statusValidation.success) {
       return NextResponse.json(
-        { error: 'Trạng thái không hợp lệ' },
+        { error: 'Dữ liệu không hợp lệ' },
         { status: 400 }
       )
     }
@@ -75,7 +92,7 @@ export async function PATCH(
       )
     }
 
-    await updateOrderStatus(orderId, validationResult.data.status)
+    await updateOrderStatus(orderId, statusValidation.data.status)
 
     return NextResponse.json({
       success: true,

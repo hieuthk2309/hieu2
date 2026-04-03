@@ -16,8 +16,9 @@ export default function OrderPage() {
   const [order, setOrder] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [editingNoteId, setEditingNoteId] = useState<string | null>(null)
+  const [editingNoteId, setEditingNoteId] = useState<number | null>(null)
   const [tempNote, setTempNote] = useState('')
+  const [isSavingNote, setIsSavingNote] = useState(false)
 
   useEffect(() => {
     async function fetchOrder() {
@@ -68,12 +69,29 @@ export default function OrderPage() {
     setTempNote(item.notes || '')
   }
 
-  const handleSaveNote = (itemId: string) => {
-    setOrder((prev: any) => ({
-      ...prev,
-      items: prev.items.map((item: any) => item.id === itemId ? { ...item, notes: tempNote } : item)
-    }))
-    setEditingNoteId(null)
+  const handleSaveNote = async (itemId: number) => {
+    if (!order) return
+    setIsSavingNote(true)
+    try {
+      const res = await fetch(`/api/orders/${order.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemId, notes: tempNote }),
+      })
+      if (!res.ok) throw new Error('Lưu thất bại')
+      // Cập nhật local state sau khi lưu API thành công
+      setOrder((prev: any) => ({
+        ...prev,
+        items: prev.items.map((item: any) =>
+          item.id === itemId ? { ...item, notes: tempNote } : item
+        ),
+      }))
+      setEditingNoteId(null)
+    } catch {
+      alert('Không thể lưu ghi chú. Vui lòng thử lại!')
+    } finally {
+      setIsSavingNote(false)
+    }
   }
 
   const handleCancelEdit = () => {
@@ -179,7 +197,7 @@ export default function OrderPage() {
               Chi tiết món ăn
             </h3>
             <div className="space-y-4">
-              {order.items.map((item) => (
+              {order.items.map((item: any) => (
                 <div key={item.id} className="flex gap-4 p-4 rounded-xl border border-border bg-card">
                   <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold shrink-0">
                     {item.quantity}x
@@ -212,8 +230,18 @@ export default function OrderPage() {
                           <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={handleCancelEdit}>
                             <X className="w-3.5 h-3.5 mr-1" /> Hủy
                           </Button>
-                          <Button size="sm" className="h-7 text-xs" onClick={() => handleSaveNote(item.id)}>
-                            <Check className="w-3.5 h-3.5 mr-1" /> Lưu
+                          <Button
+                            size="sm"
+                            className="h-7 text-xs"
+                            disabled={isSavingNote}
+                            onClick={() => handleSaveNote(item.id)}
+                          >
+                            {isSavingNote ? (
+                              <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" />
+                            ) : (
+                              <Check className="w-3.5 h-3.5 mr-1" />
+                            )}
+                            Lưu
                           </Button>
                         </div>
                       </div>

@@ -118,6 +118,16 @@ export async function updateOrderStatus(id: number, status: string): Promise<voi
   if (error) throw new Error(error.message)
 }
 
+// Update notes for a specific order item
+export async function updateOrderItemNote(itemId: number, notes: string): Promise<void> {
+  const { error } = await supabase
+    .from('order_items')
+    .update({ notes })
+    .eq('id', itemId)
+
+  if (error) throw new Error(error.message)
+}
+
 // Get orders by status
 export async function getOrdersByStatus(status: string): Promise<OrderRow[]> {
   const { data, error } = await supabase
