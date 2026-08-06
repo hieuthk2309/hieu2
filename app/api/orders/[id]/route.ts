@@ -92,12 +92,23 @@ export async function PATCH(
       )
     }
 
-    await updateOrderStatus(orderId, statusValidation.data.status)
+    const newStatus = statusValidation.data.status
+    await updateOrderStatus(orderId, newStatus)
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       message: 'Cập nhật trạng thái thành công',
     })
+
+    // Nếu đơn hàng bị hủy -> Xóa đơn khỏi cookie để giải phóng ngày đã chọn cho thiết bị
+    if (newStatus === 'cancelled') {
+      const { parseUserOrdersCookie, setUserOrdersCookie } = await import('@/lib/order-cookies')
+      const currentOrders = parseUserOrdersCookie(request)
+      const remainingOrders = currentOrders.filter(o => o.id !== orderId)
+      setUserOrdersCookie(response, remainingOrders)
+    }
+
+    return response
   } catch (error) {
     console.error('Error updating order:', error)
     return NextResponse.json(

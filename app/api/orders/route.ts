@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createOrder, createOrderItems, getAllOrders, getOrderById } from '@/lib/db'
+import { createOrder, createOrderItems, getAllOrders } from '@/lib/db'
+import { getCleanUserOrders, setUserOrdersCookie, getTodayString, UserCookieOrder } from '@/lib/order-cookies'
 import { z } from 'zod'
 
 // Validation schema for order
@@ -17,37 +18,12 @@ const OrderSchema = z.object({
   customerName: z.string().min(1, 'Vui lòng nhập họ tên'),
   total: z.number(),
   items: z.array(OrderItemSchema).min(1, 'Giỏ hàng trống'),
+  dates: z.array(z.string().regex(/^\d{4}-\d{2}-\d{2}$/)).optional(),
 })
 
-// Helper function to get today's date string (YYYY-MM-DD)
-function getTodayString(): string {
-  const today = new Date()
-  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
-}
-
-// POST - Create new order
+// POST - Create pre-orders for selected dates
 export async function POST(request: NextRequest) {
   try {
-    // Check if user already ordered today
-    const lastOrderDate = request.cookies.get('last_order_date')?.value
-    const lastOrderId = request.cookies.get('last_order_id')?.value
-    const today = getTodayString()
-
-    if (lastOrderDate === today) {
-      let hasRealOrder = true
-      if (lastOrderId) {
-        const orderExists = await getOrderById(parseInt(lastOrderId, 10))
-        if (!orderExists) hasRealOrder = false
-      }
-      
-      if (hasRealOrder) {
-        return NextResponse.json(
-          { error: 'Bạn đã đặt hàng hôm nay rồi. Vui lòng quay lại vào ngày mai!' },
-          { status: 429 }
-        )
-      }
-    }
-
     const body = await request.json()
 
     // Validate input
@@ -59,50 +35,63 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { customerName, total, items } = validationResult.data
+    const { customerName, total, items, dates: inputDates } = validationResult.data
+    const todayStr = getTodayString()
+    const targetDates = inputDates && inputDates.length > 0 ? inputDates : [todayStr]
 
-    // Create order
-    const orderId = await createOrder(customerName, total)
+    // Lấy và dọn dẹp các đơn hàng hiện có của thiết bị từ cookie
+    const { activeOrders } = await getCleanUserOrders(request)
+    const existingDates = activeOrders.map(o => o.date)
 
-    // Create order items
-    await createOrderItems(orderId, items)
+    // Kiểm tra xem ngày chọn có trùng với ngày đã đặt đơn hay không
+    for (const targetDate of targetDates) {
+      if (targetDate < todayStr) {
+        return NextResponse.json(
+          { error: `Không thể đặt hàng trước cho ngày trong quá khứ (${targetDate})` },
+          { status: 400 }
+        )
+      }
+      if (existingDates.includes(targetDate)) {
+        return NextResponse.json(
+          { error: `Ngày ${targetDate} bạn đã có 1 đơn hàng rồi. Nếu muốn đặt lại, vui lòng hủy đơn hàng cũ của ngày này!` },
+          { status: 429 }
+        )
+      }
+    }
 
-    // Create response with cookie
+    const createdOrderIds: number[] = []
+    const newCookieEntries: UserCookieOrder[] = []
+
+    // Tạo các đơn hàng riêng biệt cho từng ngày được chọn
+    for (const targetDate of targetDates) {
+      const createdAtISO = `${targetDate}T08:00:00.000Z`
+      const orderId = await createOrder(customerName, total, createdAtISO)
+      await createOrderItems(orderId, items)
+
+      createdOrderIds.push(orderId)
+      newCookieEntries.push({ id: orderId, date: targetDate })
+    }
+
+    const updatedOrders = [...activeOrders, ...newCookieEntries]
+
     const response = NextResponse.json(
       {
         success: true,
-        message: 'Đặt hàng thành công!',
-        orderId
+        message: `Đặt hàng trước thành công cho ${createdOrderIds.length} ngày!`,
+        orderIds: createdOrderIds,
+        orderId: createdOrderIds[0], // Tương thích ngược
       },
       { status: 201 }
     )
 
-    // Set cookie to expire at midnight tonight
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    tomorrow.setHours(0, 0, 0, 0)
-
-    response.cookies.set('last_order_date', today, {
-      expires: tomorrow,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-    })
-
-    response.cookies.set('last_order_id', String(orderId), {
-      expires: tomorrow,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-    })
+    // Cập nhật cookie thiết bị với danh sách đơn hàng đã đặt
+    setUserOrdersCookie(response, updatedOrders)
 
     return response
   } catch (error: any) {
-    console.error('Error creating order:', error)
+    console.error('Error creating pre-orders:', error)
     return NextResponse.json(
-      { error: 'Có lỗi xảy ra khi đặt hàng: ' + (error?.message || String(error)) },
+      { error: 'Có lỗi xảy ra khi đặt hàng trước: ' + (error?.message || String(error)) },
       { status: 500 }
     )
   }

@@ -20,7 +20,7 @@ export function MenuCard({ item, onAddClick }: MenuCardProps) {
 
   return (
     <Card className="overflow-hidden group hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
-      <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+      <div className="relative h-48 shrink-0 overflow-hidden bg-muted">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
           <span className="text-6xl">🥖</span>
         </div>

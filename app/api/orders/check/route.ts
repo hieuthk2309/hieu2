@@ -1,32 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getOrderById } from '@/lib/db'
+import { getCleanUserOrders, setUserOrdersCookie, getTodayString } from '@/lib/order-cookies'
 
-// Helper function to get today's date string (YYYY-MM-DD)
-export function getTodayString(): string {
-  const today = new Date()
-  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
-}
-
-// GET - Check if user can order today
 export async function GET(request: NextRequest) {
-  const lastOrderDate = request.cookies.get('last_order_date')?.value
-  const lastOrderId = request.cookies.get('last_order_id')?.value
-  const today = getTodayString()
+  try {
+    const { activeOrders } = await getCleanUserOrders(request)
+    const todayStr = getTodayString()
 
-  let canOrder = lastOrderDate !== today
+    const orderedDates = activeOrders.map(o => o.date)
+    const isTodayOrdered = orderedDates.includes(todayStr)
+    const lastOrder = activeOrders.length > 0 ? activeOrders[activeOrders.length - 1] : null
 
-  // Nếu cookie báo đã đặt, nhưng DB bị reset mất đơn -> Cho phép đặt lại
-  if (!canOrder && lastOrderId) {
-    const orderExists = await getOrderById(parseInt(lastOrderId, 10))
-    if (!orderExists) canOrder = true
+    const response = NextResponse.json({
+      canOrderToday: !isTodayOrdered,
+      canOrder: !isTodayOrdered, // Giữ lại tương thích
+      orderedDates,
+      activeOrders,
+      lastOrderId: lastOrder ? lastOrder.id : null,
+      lastOrderDate: lastOrder ? lastOrder.date : null,
+      message: isTodayOrdered
+        ? 'Bạn đã đặt đơn hàng cho ngày hôm nay rồi!'
+        : 'Bạn có thể đặt hàng trước cho các ngày khả dụng.',
+    })
+
+    // Lưu cookie đã được làm mới (xóa ngày quá khứ / đơn đã bị hủy)
+    setUserOrdersCookie(response, activeOrders)
+
+    return response
+  } catch (error: any) {
+    console.error('Error checking user orders:', error)
+    return NextResponse.json(
+      { error: 'Có lỗi xảy ra khi kiểm tra danh sách đơn hàng' },
+      { status: 500 }
+    )
   }
-
-  return NextResponse.json({
-    canOrder,
-    lastOrderDate: lastOrderDate || null,
-    lastOrderId: lastOrderId || null,
-    message: canOrder
-      ? 'Ban co the dat hang'
-      : 'Ban da dat hang hom nay roi. Vui long quay lai vao ngay mai nhe!'
-  })
 }

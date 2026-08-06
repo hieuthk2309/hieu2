@@ -4,16 +4,16 @@ export const menuItems: MenuItem[] = [
   {
     id: '1',
     name: 'Bánh Mì Đặc Biệt',
-    description: 'Bánh mì giòn với thịt nguội, chả lụa, pate, rau mùi, dưa leo, đồ chua',
+    description: 'Bánh mì với chả cá chiên giòn, trứng chiên, dưa leo, rau răm, nước sốt, tương ớt, ớt',
     price: 20000,
     image: '/banh-mi-thit-nguoi.jpg',
-    category: 'classic',
+    category: 'special',
     popular: true,
   },
   {
     id: '2',
     name: 'Bánh Mì Chả Cá',
-    description: 'Bánh mì với chả cá chiên giòn, rau thơm, sốt cà chua',
+    description: 'Bánh mì với chả cá chiên giòn, dưa leo siu ngon',
     price: 15000,
     image: '/banh-mi-cha-ca.jpg',
     category: 'classic',
@@ -21,7 +21,7 @@ export const menuItems: MenuItem[] = [
   {
     id: '3',
     name: 'Bánh Mì Trứng Ốp La',
-    description: 'Bánh mì nóng hổi với trứng ốp la, pate, hành phi',
+    description: 'Bánh mì nóng hổi với trứng ốp la, dưa leo siu ngon',
     price: 15000,
     image: '/banh-mi-trung.jpg',
     category: 'classic',
@@ -71,8 +71,8 @@ export const menuItems: MenuItem[] = [
 ]
 
 export const toppings: Topping[] = [
-  { id: 't1', name: 'Thêm chả cá', price: 5000 },
-  { id: 't2', name: 'Thêm Trứng', price: 5000 },
+  // { id: 't1', name: 'Thêm chả cá', price: 5000 },
+  // { id: 't2', name: 'Thêm Trứng', price: 5000 },
 ]
 
 export const categories = [

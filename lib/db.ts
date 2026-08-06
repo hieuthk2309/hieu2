@@ -23,11 +23,20 @@ export interface OrderItemRow {
 // Insert a new order
 export async function createOrder(
   customerName: string,
-  total: number
+  total: number,
+  createdAt?: string
 ): Promise<number> {
+  const insertData: { customer_name: string; total: number; created_at?: string } = {
+    customer_name: customerName,
+    total,
+  }
+  if (createdAt) {
+    insertData.created_at = createdAt
+  }
+
   const { data, error } = await supabase
     .from('orders')
-    .insert([{ customer_name: customerName, total }])
+    .insert([insertData])
     .select('id')
     .single()
 
@@ -139,3 +148,54 @@ export async function getOrdersByStatus(status: string): Promise<OrderRow[]> {
   if (error) throw new Error(error.message)
   return data || []
 }
+
+// Get orders by date (YYYY-MM-DD) with their items
+export async function getOrdersByDateWithItems(dateStr?: string): Promise<{ order: OrderRow; items: OrderItemRow[] }[]> {
+  let startOfDay: Date
+  let endOfDay: Date
+
+  if (dateStr && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    const [year, month, day] = dateStr.split('-').map(Number)
+    startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0)
+    endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999)
+  } else {
+    startOfDay = new Date()
+    startOfDay.setHours(0, 0, 0, 0)
+    endOfDay = new Date()
+    endOfDay.setHours(23, 59, 59, 999)
+  }
+
+  const { data: orders, error: ordersError } = await supabase
+    .from('orders')
+    .select('*')
+    .gte('created_at', startOfDay.toISOString())
+    .lte('created_at', endOfDay.toISOString())
+    .order('created_at', { ascending: false })
+
+  if (ordersError) throw new Error(ordersError.message)
+  if (!orders || orders.length === 0) return []
+
+  const orderIds = orders.map(o => o.id)
+  const { data: items, error: itemsError } = await supabase
+    .from('order_items')
+    .select('*')
+    .in('order_id', orderIds)
+
+  if (itemsError) throw new Error(itemsError.message)
+
+  const formattedItems = (items || []).map(item => ({
+    ...item,
+    toppings: typeof item.toppings === 'string' ? item.toppings : JSON.stringify(item.toppings || [])
+  }))
+
+  return orders.map(order => ({
+    order,
+    items: formattedItems.filter(item => item.order_id === order.id)
+  }))
+}
+
+// Get all orders created today with their items
+export async function getTodayOrdersWithItems(): Promise<{ order: OrderRow; items: OrderItemRow[] }[]> {
+  return getOrdersByDateWithItems()
+}
+

@@ -76,9 +76,9 @@ export function CustomizeDialog({ item, open, onClose }: CustomizeDialogProps) {
             <span className="text-2xl">🥖</span>
             {item.name}
           </DialogTitle>
-          <DialogDescription>
-            Tùy chỉnh topping và ghi chú cho món ăn của bạn
-          </DialogDescription>
+          {/* <DialogDescription>
+            Tùy chỉnh số lượng và ghi chú cho món ăn của bạn
+          </DialogDescription> */}
         </DialogHeader>
 
         <div className="space-y-6 py-4 overflow-y-auto flex-1">
@@ -91,7 +91,7 @@ export function CustomizeDialog({ item, open, onClose }: CustomizeDialogProps) {
           </div>
 
           {/* Toppings */}
-          <div>
+          {/* <div>
             <h4 className="font-semibold mb-3 text-foreground">Thêm Topping</h4>
             <div className="space-y-2">
               {toppings.map((topping) => (
@@ -112,7 +112,7 @@ export function CustomizeDialog({ item, open, onClose }: CustomizeDialogProps) {
                 </label>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Notes */}
           <div>
