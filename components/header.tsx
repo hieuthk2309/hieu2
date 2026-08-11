@@ -44,7 +44,7 @@ export function Header({ onCartClick }: HeaderProps) {
               <span className="text-primary-foreground font-bold text-lg">B</span>
             </div>
             <div>
-              <h1 className="font-bold text-lg text-foreground">Bánh Mì Sài Gòn</h1>
+              <h1 className="font-bold text-lg text-foreground">Bánh Mì Hieudeptrai</h1>
               <p className="text-xs text-muted-foreground">Ngon - Nhanh - Tiện</p>
             </div>
           </Link>
@@ -56,17 +56,17 @@ export function Header({ onCartClick }: HeaderProps) {
             </a>
             <Link href="/admin" className="text-primary hover:underline font-semibold flex items-center gap-1.5">
               <LayoutDashboard className="w-4 h-4" />
-              Tổng Đơn Hôm Nay
+              Đừng bấm vào đây 😢😢😢
             </Link>
           </nav>
 
           <div className="flex items-center gap-2">
-            <Link href="/admin">
+            {/* <Link href="/admin">
               <Button variant="ghost" size="sm" className="hidden sm:flex text-xs font-semibold gap-1.5 text-primary bg-primary/10 hover:bg-primary/20">
                 <LayoutDashboard className="h-4 w-4" />
                 Quản lý đơn
               </Button>
-            </Link>
+            </Link> */}
 
             {hasOrder && (
               <Link href="/orders">
@@ -124,7 +124,7 @@ export function Header({ onCartClick }: HeaderProps) {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <LayoutDashboard className="w-4 h-4" />
-                Tổng Đơn Hàng Hôm Nay
+                Đừng bấm vào đây 😢😢😢
               </Link>
             </div>
           </nav>

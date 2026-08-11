@@ -7,8 +7,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Bánh Mì Sài Gòn - Đặt Hàng Online',
-  description: 'Đặt bánh mì tươi ngon, giao hàng nhanh chóng. Bánh mì thịt, bánh mì chả, bánh mì trứng và nhiều loại khác.',
+  title: 'Bánh Mì Hieudeptrai - Đặt Hàng Online',
+  description: 'Đặt bánh mì tươi ngon, giao hàng nhanh chóng. Bánh mì chả cá, bánh mì trứng và nhiều loại khác.',
   generator: 'v0.app',
   icons: {
     icon: [

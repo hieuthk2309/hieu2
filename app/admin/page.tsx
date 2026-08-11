@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import {
   Card,
@@ -35,6 +35,10 @@ import {
   PackageCheck,
   Calendar,
   Utensils,
+  Lock,
+  Eye,
+  EyeOff,
+  ShieldCheck,
 } from 'lucide-react'
 
 interface OrderItemData {
@@ -150,7 +154,17 @@ const formatSelectedDateText = (dateStr: string) => {
   return `${prefix}${formatted}`
 }
 
+const ADMIN_PASSWORD = 'hieu123'
+const SESSION_KEY = 'admin_auth'
+
 export default function AdminTodayOrdersPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [passwordInput, setPasswordInput] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [authError, setAuthError] = useState(false)
+  const [isShaking, setIsShaking] = useState(false)
+  const passwordRef = useRef<HTMLInputElement>(null)
+
   const [selectedDate, setSelectedDate] = useState<string>(getTodayStr())
   const [orders, setOrders] = useState<OrderWithItems[]>([])
   const [summary, setSummary] = useState<SummaryData | null>(null)
@@ -161,6 +175,39 @@ export default function AdminTodayOrdersPage() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null)
+
+  // Check session on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = sessionStorage.getItem(SESSION_KEY)
+      if (stored === 'true') setIsAuthenticated(true)
+    }
+  }, [])
+
+  // Focus input when modal appears
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setTimeout(() => passwordRef.current?.focus(), 100)
+    }
+  }, [isAuthenticated])
+
+  const handleLogin = () => {
+    if (passwordInput === ADMIN_PASSWORD) {
+      sessionStorage.setItem(SESSION_KEY, 'true')
+      setIsAuthenticated(true)
+      setAuthError(false)
+    } else {
+      setAuthError(true)
+      setIsShaking(true)
+      setPasswordInput('')
+      setTimeout(() => setIsShaking(false), 600)
+      setTimeout(() => passwordRef.current?.focus(), 100)
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') handleLogin()
+  }
 
   const fetchOrders = useCallback(async (dateToFetch?: string, showRefreshingState = false) => {
     try {
@@ -231,6 +278,100 @@ export default function AdminTodayOrdersPage() {
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter
     return matchesSearch && matchesStatus
   })
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-950 relative overflow-hidden">
+        {/* Background blobs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl" />
+        </div>
+
+        <div
+          className="relative z-10 w-full max-w-sm mx-4"
+          style={{
+            animation: isShaking ? 'shake 0.5s ease-in-out' : 'none',
+          }}
+        >
+          <style>{`
+            @keyframes shake {
+              0%, 100% { transform: translateX(0); }
+              15% { transform: translateX(-8px); }
+              30% { transform: translateX(8px); }
+              45% { transform: translateX(-6px); }
+              60% { transform: translateX(6px); }
+              75% { transform: translateX(-4px); }
+              90% { transform: translateX(4px); }
+            }
+            @keyframes fadeInUp {
+              from { opacity: 0; transform: translateY(24px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+          `}</style>
+
+          <div
+            className="bg-slate-900/80 backdrop-blur-xl border border-slate-700/60 rounded-3xl p-8 shadow-2xl"
+            style={{ animation: 'fadeInUp 0.4s ease-out' }}
+          >
+            {/* Icon */}
+            <div className="flex flex-col items-center mb-8">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 mb-4">
+                <Lock className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-2xl font-extrabold text-white tracking-tight">Khu Vực Quản Lý</h1>
+              <p className="text-slate-400 text-sm mt-1.5 text-center">Nhập mật khẩu để truy cập trang quản lý đơn hàng</p>
+            </div>
+
+            {/* Password input */}
+            <div className="space-y-4">
+              <div className="relative">
+                <input
+                  ref={passwordRef}
+                  type={showPassword ? 'text' : 'password'}
+                  value={passwordInput}
+                  onChange={(e) => {
+                    setPasswordInput(e.target.value)
+                    if (authError) setAuthError(false)
+                  }}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Nhập mật khẩu..."
+                  className={`w-full px-4 py-3.5 pr-12 rounded-xl text-white placeholder-slate-500 text-sm font-medium outline-none transition-all duration-200 ${
+                    authError
+                      ? 'bg-rose-950/40 border-2 border-rose-500/70 focus:border-rose-400'
+                      : 'bg-slate-800/70 border-2 border-slate-700/60 focus:border-indigo-500/80'
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
+                </button>
+              </div>
+
+              {authError && (
+                <p className="text-rose-400 text-xs font-medium flex items-center gap-1.5 px-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-400 inline-block" />
+                  Mật khẩu không đúng. Vui lòng thử lại.
+                </p>
+              )}
+
+              <button
+                onClick={handleLogin}
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-sm transition-all duration-200 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                Truy Cập
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950 p-4 md:p-8">

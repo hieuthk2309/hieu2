@@ -19,7 +19,7 @@ export function HeroSection() {
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight text-balance">
-              Bánh Mì Sài Gòn
+              Bánh Mì Hieudeptrai
               <span className="text-primary"> Ngon Tuyệt</span>
             </h1>
             
