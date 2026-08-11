@@ -1,94 +1,86 @@
 'use client'
 
-import { ArrowDown, Clock, MapPin, Phone } from 'lucide-react'
+import { ArrowDown, Clock, Phone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/10">
-      <div className="container mx-auto px-4 py-16 md:py-24">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* Content */}
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+    <section className="relative overflow-hidden border-b border-border bg-gradient-to-r from-primary/5 via-background to-amber-500/5">
+      <div className="container mx-auto px-4 py-8 md:py-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+
+          {/* Left: Brand + tagline */}
+          <div className="space-y-3 flex-1">
+            {/* Open badge */}
+            <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
               </span>
-              Đang mở cửa
+              Đang mở cửa • 6:00 – 21:00
             </div>
-            
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight text-balance">
+
+            <h1 className="text-2xl md:text-3xl font-extrabold text-foreground leading-tight">
               Bánh Mì Hieudeptrai
-              <span className="text-primary"> Ngon Tuyệt</span>
+              <span className="text-primary"> – Ngon Tuyệt</span>
             </h1>
-            
-            <p className="text-lg text-muted-foreground max-w-lg text-pretty">
-              Thưởng thức hương vị bánh mì truyền thống Sài Gòn với nguyên liệu tươi ngon, 
-              được chuẩn bị tỉ mỉ mỗi ngày. Giao hàng nhanh chóng trong 30 phút!
+
+            <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
+              Bánh mì tươi giòn kết hợp cà phê phin thơm ngon – bữa sáng hoàn hảo mỗi ngày.
             </p>
 
-            <div className="flex flex-wrap gap-4">
-              <Button size="lg" asChild>
+            {/* CTAs */}
+            <div className="flex flex-wrap gap-2 pt-1">
+              <Button size="sm" asChild>
                 <a href="#menu">
                   Xem Thực Đơn
-                  <ArrowDown className="w-4 h-4 ml-2" />
+                  <ArrowDown className="w-3.5 h-3.5 ml-1.5" />
                 </a>
               </Button>
-              <Button size="lg" variant="outline" asChild>
-                <a href="tel:0901234567">
-                  <Phone className="w-4 h-4 mr-2" />
+              <Button size="sm" variant="outline" asChild>
+                <a href="tel:0799132435">
+                  <Phone className="w-3.5 h-3.5 mr-1.5" />
                   Gọi Đặt Hàng
                 </a>
               </Button>
             </div>
+          </div>
 
-            {/* Quick Info */}
-            <div className="flex flex-wrap gap-6 pt-4">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Clock className="w-4 h-4 text-primary" />
-                <span>6:00 - 21:00</span>
+          {/* Right: combo showcase */}
+          <div className="flex items-center gap-3 md:gap-4 shrink-0">
+            {/* Bánh mì card */}
+            <div className="flex flex-col items-center gap-2 bg-card border border-border rounded-2xl px-4 py-4 shadow-sm hover:shadow-md transition-shadow min-w-[110px]">
+              <span className="text-4xl">🥖</span>
+              <div className="text-center">
+                <p className="text-xs font-bold text-foreground">Bánh Mì</p>
+                <p className="text-xs text-primary font-semibold">Từ 15.000đ</p>
               </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <MapPin className="w-4 h-4 text-primary" />
-                <span>123 Nguyễn Huệ, Q.1, TP.HCM</span>
+            </div>
+
+            {/* Separator */}
+            <div className="flex flex-col items-center gap-1 text-muted-foreground">
+              <span className="text-lg font-light">+</span>
+            </div>
+
+            {/* Nước card */}
+            <div className="flex flex-col items-center gap-2 bg-card border border-border rounded-2xl px-4 py-4 shadow-sm hover:shadow-md transition-shadow min-w-[110px]">
+              <span className="text-4xl">☕</span>
+              <div className="text-center">
+                <p className="text-xs font-bold text-foreground">Đồ Uống</p>
+                <p className="text-xs text-amber-600 dark:text-amber-400 font-semibold">Từ 15.000đ</p>
+              </div>
+            </div>
+
+            {/* Giao nhanh badge */}
+            <div className="hidden sm:flex flex-col items-center gap-2 bg-primary/5 border border-primary/20 rounded-2xl px-4 py-4 min-w-[100px]">
+              <Clock className="w-7 h-7 text-primary" />
+              <div className="text-center">
+                <p className="text-xs font-bold text-foreground">Giao Nhanh</p>
+                <p className="text-xs text-muted-foreground font-medium">30 phút</p>
               </div>
             </div>
           </div>
 
-          {/* Hero Image */}
-          <div className="relative">
-            <div className="aspect-square relative">
-              {/* Decorative background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full blur-3xl"></div>
-              
-              {/* Main visual */}
-              <div className="relative bg-gradient-to-br from-primary/10 to-accent/10 rounded-3xl p-8 flex items-center justify-center">
-                <div className="text-center">
-                  <span className="text-9xl md:text-[10rem]">🥖</span>
-                  <div className="mt-4 space-y-2">
-                    <div className="bg-card shadow-lg rounded-full px-6 py-3 inline-block">
-                      <span className="font-bold text-primary">Từ 20.000đ</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating badges */}
-              <div className="absolute top-4 right-4 bg-card shadow-lg rounded-xl px-4 py-2 animate-bounce">
-                <span className="text-sm font-semibold text-foreground">Giao 30 phút</span>
-              </div>
-              <div className="absolute bottom-8 left-0 bg-card shadow-lg rounded-xl px-4 py-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">⭐</span>
-                  <div>
-                    <span className="font-bold text-foreground">4.9</span>
-                    <span className="text-xs text-muted-foreground ml-1">(500+ đánh giá)</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

@@ -4,7 +4,7 @@ export interface MenuItem {
   description: string
   price: number
   image: string
-  category: 'classic' | 'special' | 'vegetarian'
+  category: 'classic' | 'special' | 'vegetarian' | 'drink'
   popular?: boolean
 }
 

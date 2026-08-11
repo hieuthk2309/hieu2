@@ -8,9 +8,10 @@ import type { MenuItem } from '@/lib/types'
 interface MenuCardProps {
   item: MenuItem
   onAddClick: (item: MenuItem) => void
+  isDrink?: boolean
 }
 
-export function MenuCard({ item, onAddClick }: MenuCardProps) {
+export function MenuCard({ item, onAddClick, isDrink = false }: MenuCardProps) {
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
@@ -18,16 +19,29 @@ export function MenuCard({ item, onAddClick }: MenuCardProps) {
     }).format(price)
   }
 
+  const emoji = isDrink
+    ? item.name.toLowerCase().includes('trà') ? '🍋' : '☕'
+    : '🥖'
+
+  const gradientClass = isDrink
+    ? 'from-amber-500/20 to-orange-400/20'
+    : 'from-primary/20 to-accent/20'
+
   return (
     <Card className="overflow-hidden group hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
       <div className="relative h-48 shrink-0 overflow-hidden bg-muted">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-          <span className="text-6xl">🥖</span>
+        <div className={`absolute inset-0 bg-gradient-to-br ${gradientClass} flex items-center justify-center`}>
+          <span className="text-6xl">{emoji}</span>
         </div>
         {item.popular && (
           <div className="absolute top-2 left-2 bg-primary text-primary-foreground px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
             <Star className="w-3 h-3 fill-current" />
             Bán Chạy
+          </div>
+        )}
+        {isDrink && (
+          <div className="absolute top-2 right-2 bg-amber-500/90 text-white px-2 py-1 rounded-full text-xs font-semibold">
+            Đồ Uống
           </div>
         )}
       </div>

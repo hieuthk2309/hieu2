@@ -26,58 +26,40 @@ export const menuItems: MenuItem[] = [
     image: '/banh-mi-trung.jpg',
     category: 'classic',
   },
-  // {
-  //   id: '4',
-  //   name: 'Cà phê đen',
-  //   description: 'Bánh mì với xíu mại sốt cà chua đậm đà, rau thơm',
-  //   price: 30000,
-  //   image: '/banh-mi-xiu-mai.jpg',
-  //   category: 'special',
-  //   popular: true,
-  // },
-  // {
-  //   id: '5',
-  //   name: 'Cà phê sữa',
-  //   description: 'Bánh mì chấm nước bò kho thơm ngon, thịt bò mềm',
-  //   price: 35000,
-  //   image: '/banh-mi-bo-kho.jpg',
-  //   category: 'special',
-  // },
-  // {
-  //   id: '6',
-  //   name: 'Bánh Mì Thịt Nướng',
-  //   description: 'Bánh mì với thịt heo nướng than hoa, đồ chua, rau sống',
-  //   price: 32000,
-  //   image: '/banh-mi-thit-nuong.jpg',
-  //   category: 'special',
-  //   popular: true,
-  // },
-  // {
-  //   id: '7',
-  //   name: 'Bánh Mì Chay',
-  //   description: 'Bánh mì với đậu hũ chiên, nấm, rau củ xào',
-  //   price: 20000,
-  //   image: '/banh-mi-chay.jpg',
-  //   category: 'vegetarian',
-  // },
-  // {
-  //   id: '8',
-  //   name: 'Bánh Mì Bì Chay',
-  //   description: 'Bánh mì với bì chay làm từ đậu nành, rau thơm',
-  //   price: 22000,
-  //   image: '/banh-mi-bi-chay.jpg',
-  //   category: 'vegetarian',
-  // },
+  {
+    id: 'd1',
+    name: 'Cà Phê Đen',
+    description: 'Cà phê đen nguyên chất đậm đà, thơm ngon, pha phin truyền thống',
+    price: 15000,
+    image: '/ca-phe-den.jpg',
+    category: 'drink',
+    popular: true,
+  },
+  {
+    id: 'd2',
+    name: 'Cà Phê Sữa',
+    description: 'Cà phê phin kết hợp sữa đặc ngọt ngào, béo ngậy',
+    price: 18000,
+    image: '/ca-phe-sua.jpg',
+    category: 'drink',
+  },
+  {
+    id: 'd3',
+    name: 'Trà Tắc',
+    description: 'Trà xanh tươi mát kết hợp tắc (quất) chua ngọt, thêm đường vừa phải',
+    price: 15000,
+    image: '/tra-tac.jpg',
+    category: 'drink',
+  },
 ]
 
-export const toppings: Topping[] = [
-  // { id: 't1', name: 'Thêm chả cá', price: 5000 },
-  // { id: 't2', name: 'Thêm Trứng', price: 5000 },
-]
+export const toppings: Topping[] = []
 
 export const categories = [
   { id: 'all', name: 'Tất Cả' },
   { id: 'classic', name: 'Cổ Điển' },
   { id: 'special', name: 'Đặc Biệt' },
-  // { id: 'vegetarian', name: 'Chay' },
 ]
+
+export const foodItems: MenuItem[] = menuItems.filter((item) => item.category !== 'drink')
+export const drinkItems: MenuItem[] = menuItems.filter((item) => item.category === 'drink')
