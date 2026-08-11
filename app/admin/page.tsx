@@ -39,7 +39,10 @@ import {
   Eye,
   EyeOff,
   ShieldCheck,
+  Wallet,
+  Users,
 } from 'lucide-react'
+import { CustomerDebtManagement } from '@/components/customer-debt-management'
 
 interface OrderItemData {
   id: number
@@ -165,6 +168,7 @@ export default function AdminTodayOrdersPage() {
   const [isShaking, setIsShaking] = useState(false)
   const passwordRef = useRef<HTMLInputElement>(null)
 
+  const [activeTab, setActiveTab] = useState<'orders' | 'customers'>('orders')
   const [selectedDate, setSelectedDate] = useState<string>(getTodayStr())
   const [orders, setOrders] = useState<OrderWithItems[]>([])
   const [summary, setSummary] = useState<SummaryData | null>(null)
@@ -388,82 +392,133 @@ export default function AdminTodayOrdersPage() {
                 </Link>
               </div>
               <h1 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tight flex items-center gap-3">
-                <Utensils className="w-8 h-8 text-primary" />
-                Quản Lý Đơn Hàng
+                {activeTab === 'orders' ? (
+                  <>
+                    <Utensils className="w-8 h-8 text-primary" />
+                    Quản Lý Đơn Hàng
+                  </>
+                ) : (
+                  <>
+                    <Wallet className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+                    Quản Lý Khách Hàng & Công Nợ
+                  </>
+                )}
               </h1>
               <p className="text-muted-foreground text-sm flex items-center gap-2 mt-1 capitalize font-medium">
-                <Calendar className="w-4 h-4 text-primary" />
-                {formatSelectedDateText(selectedDate)}
+                {activeTab === 'orders' ? (
+                  <>
+                    <Calendar className="w-4 h-4 text-primary" />
+                    {formatSelectedDateText(selectedDate)}
+                  </>
+                ) : (
+                  <>
+                    <Users className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                    Quản lý thông tin khách hàng và số tiền công nợ
+                  </>
+                )}
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border text-sm">
-                <Switch
-                  id="auto-refresh"
-                  checked={autoRefresh}
-                  onCheckedChange={setAutoRefresh}
-                />
-                <label htmlFor="auto-refresh" className="cursor-pointer text-xs font-medium select-none">
-                  Tự động làm mới (30s)
-                </label>
+              {/* Navigation Tabs */}
+              <div className="flex items-center gap-1.5 bg-muted/60 p-1 rounded-xl border border-border">
+                <Button
+                  variant={activeTab === 'orders' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setActiveTab('orders')}
+                  className="gap-2 font-bold text-xs h-9"
+                >
+                  <Utensils className="w-4 h-4" />
+                  Đơn Hàng
+                </Button>
+                <Button
+                  variant={activeTab === 'customers' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setActiveTab('customers')}
+                  className="gap-2 font-bold text-xs h-9"
+                >
+                  <Wallet className="w-4 h-4" />
+                  Khách Hàng & Công Nợ
+                </Button>
               </div>
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => fetchOrders(selectedDate, true)}
-                disabled={isRefreshing}
-                className="gap-2"
-              >
-                <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                Làm mới
-              </Button>
+              {activeTab === 'orders' && (
+                <>
+                  <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border text-sm">
+                    <Switch
+                      id="auto-refresh"
+                      checked={autoRefresh}
+                      onCheckedChange={setAutoRefresh}
+                    />
+                    <label htmlFor="auto-refresh" className="cursor-pointer text-xs font-medium select-none">
+                      Tự động làm mới (30s)
+                    </label>
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fetchOrders(selectedDate, true)}
+                    disabled={isRefreshing}
+                    className="gap-2"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                    Làm mới
+                  </Button>
+                </>
+              )}
             </div>
           </div>
 
-          {/* Date Picker & Quick Select */}
-          <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-border/60">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider shrink-0 flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-primary" /> Chọn ngày:
-              </span>
-              <Input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-auto h-9 text-xs font-semibold bg-background border-input cursor-pointer"
-              />
-            </div>
+          {/* Date Picker & Quick Select (Only shown for Orders tab) */}
+          {activeTab === 'orders' && (
+            <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-border/60">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider shrink-0 flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-primary" /> Chọn ngày:
+                </span>
+                <Input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="w-auto h-9 text-xs font-semibold bg-background border-input cursor-pointer"
+                />
+              </div>
 
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <Button
-                variant={selectedDate === getTodayStr() ? 'default' : 'secondary'}
-                size="sm"
-                onClick={() => setSelectedDate(getTodayStr())}
-                className="text-xs h-8 px-3 font-medium"
-              >
-                Hôm nay
-              </Button>
-              <Button
-                variant={selectedDate === getShiftedDateStr(1) ? 'default' : 'secondary'}
-                size="sm"
-                onClick={() => setSelectedDate(getShiftedDateStr(1))}
-                className="text-xs h-8 px-3 font-medium"
-              >
-                Hôm qua
-              </Button>
-              <Button
-                variant={selectedDate === getShiftedDateStr(2) ? 'default' : 'secondary'}
-                size="sm"
-                onClick={() => setSelectedDate(getShiftedDateStr(2))}
-                className="text-xs h-8 px-3 font-medium"
-              >
-                Hôm kia
-              </Button>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <Button
+                  variant={selectedDate === getTodayStr() ? 'default' : 'secondary'}
+                  size="sm"
+                  onClick={() => setSelectedDate(getTodayStr())}
+                  className="text-xs h-8 px-3 font-medium"
+                >
+                  Hôm nay
+                </Button>
+                <Button
+                  variant={selectedDate === getShiftedDateStr(1) ? 'default' : 'secondary'}
+                  size="sm"
+                  onClick={() => setSelectedDate(getShiftedDateStr(1))}
+                  className="text-xs h-8 px-3 font-medium"
+                >
+                  Hôm qua
+                </Button>
+                <Button
+                  variant={selectedDate === getShiftedDateStr(2) ? 'default' : 'secondary'}
+                  size="sm"
+                  onClick={() => setSelectedDate(getShiftedDateStr(2))}
+                  className="text-xs h-8 px-3 font-medium"
+                >
+                  Hôm kia
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
+
+        {activeTab === 'customers' ? (
+          <CustomerDebtManagement />
+        ) : (
+          <>
 
         {/* Stat Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -740,6 +795,8 @@ export default function AdminTodayOrdersPage() {
             </div>
           )}
         </div>
+      </>
+    )}
       </div>
     </div>
   )

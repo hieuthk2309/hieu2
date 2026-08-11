@@ -53,7 +53,7 @@ export function CartSidebar({ open, onClose, onCheckout }: CartSidebarProps) {
             </div>
             <h3 className="text-lg font-bold text-foreground mb-2 tracking-tight">Giỏ hàng đang trống</h3>
             <p className="text-sm text-muted-foreground w-3/4 mx-auto leading-relaxed">
-              Hãy chọn ngay một ổ bánh mì chả các thật giòn ngon để tiến hành đặt hàng nhé!
+              Hãy chọn ngay một ổ bánh mì chả cá thật giòn ngon để tiến hành đặt hàng nhé!
             </p>
           </div>
         ) : (
