@@ -420,28 +420,6 @@ export default function AdminTodayOrdersPage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-              {/* Navigation Tabs */}
-              <div className="flex items-center gap-1.5 bg-muted/60 p-1 rounded-xl border border-border">
-                <Button
-                  variant={activeTab === 'orders' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setActiveTab('orders')}
-                  className="gap-2 font-bold text-xs h-9"
-                >
-                  <Utensils className="w-4 h-4" />
-                  Đơn Hàng
-                </Button>
-                <Button
-                  variant={activeTab === 'customers' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setActiveTab('customers')}
-                  className="gap-2 font-bold text-xs h-9"
-                >
-                  <Wallet className="w-4 h-4" />
-                  Khách Hàng & Công Nợ
-                </Button>
-              </div>
-
               {activeTab === 'orders' && (
                 <>
                   <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border text-sm">
@@ -467,6 +445,27 @@ export default function AdminTodayOrdersPage() {
                   </Button>
                 </>
               )}
+              {/* Navigation Tabs */}
+              <div className="flex items-center gap-1.5 bg-muted/60 p-1 rounded-xl border border-border">
+                <Button
+                  variant={activeTab === 'orders' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setActiveTab('orders')}
+                  className="gap-2 font-bold text-xs h-9"
+                >
+                  <Utensils className="w-4 h-4" />
+                  Đơn Hàng
+                </Button>
+                <Button
+                  variant={activeTab === 'customers' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setActiveTab('customers')}
+                  className="gap-2 font-bold text-xs h-9"
+                >
+                  <Wallet className="w-4 h-4" />
+                  Khách Hàng & Công Nợ
+                </Button>
+              </div>
             </div>
           </div>
 

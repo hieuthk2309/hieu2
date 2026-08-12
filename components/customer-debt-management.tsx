@@ -530,10 +530,10 @@ export function CustomerDebtManagement() {
                               className="h-8 px-2 text-xs font-medium"
                               onClick={() => {
                                 const current = Number(editDebtValue) || 0
-                                setEditDebtValue(String(current + 10000))
+                                setEditDebtValue(String(current + 15000))
                               }}
                             >
-                              +10k
+                              +15k
                             </Button>
                             <Button
                               type="button"
@@ -542,10 +542,10 @@ export function CustomerDebtManagement() {
                               className="h-8 px-2 text-xs font-medium"
                               onClick={() => {
                                 const current = Number(editDebtValue) || 0
-                                setEditDebtValue(String(current + 50000))
+                                setEditDebtValue(String(current + 20000))
                               }}
                             >
-                              +50k
+                              +20k
                             </Button>
                             <Button
                               type="button"
