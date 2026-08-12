@@ -43,11 +43,20 @@ export async function POST(request: NextRequest) {
     const { activeOrders } = await getCleanUserOrders(request)
     const existingDates = activeOrders.map(o => o.date)
 
-    // Kiểm tra xem ngày chọn có trùng với ngày đã đặt đơn hay không
+    // Kiểm tra xem ngày chọn có hợp lệ không (không ở quá khứ, không trùng, không vào Thứ 7/CN)
     for (const targetDate of targetDates) {
       if (targetDate < todayStr) {
         return NextResponse.json(
           { error: `Không thể đặt hàng trước cho ngày trong quá khứ (${targetDate})` },
+          { status: 400 }
+        )
+      }
+      const [year, month, day] = targetDate.split('-').map(Number)
+      const targetObj = new Date(year, month - 1, day)
+      const dayOfWeek = targetObj.getDay()
+      if (dayOfWeek === 0 || dayOfWeek === 6) {
+        return NextResponse.json(
+          { error: `Không nhận đơn hàng vào Thứ 7 và Chủ Nhật (${targetDate})` },
           { status: 400 }
         )
       }

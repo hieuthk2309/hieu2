@@ -132,6 +132,15 @@ const getShiftedDateStr = (daysAgo: number) => {
   return `${year}-${month}-${day}`
 }
 
+const getNearDateStr = (daysAgo: number) => {
+  const d = new Date()
+  d.setDate(d.getDate() + daysAgo)
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 const formatSelectedDateText = (dateStr: string) => {
   if (!dateStr) return ''
   const [year, month, day] = dateStr.split('-').map(Number)
@@ -139,12 +148,15 @@ const formatSelectedDateText = (dateStr: string) => {
 
   const todayStr = getTodayStr()
   const yesterdayStr = getShiftedDateStr(1)
+  const tommorrowStr = getNearDateStr(1);
 
   let prefix = ''
   if (dateStr === todayStr) {
     prefix = 'Hôm nay - '
   } else if (dateStr === yesterdayStr) {
     prefix = 'Hôm qua - '
+  } else if (dateStr === tommorrowStr) {
+    prefix = 'Ngày mai - ';
   }
 
   const formatted = date.toLocaleDateString('vi-VN', {
@@ -465,6 +477,16 @@ export default function AdminTodayOrdersPage() {
                   <Wallet className="w-4 h-4" />
                   Khách Hàng & Công Nợ
                 </Button>
+                <Link href="/kitchen">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5 font-bold text-xs h-9 text-amber-800 bg-amber-50 dark:bg-amber-950/40 dark:text-amber-300 border-amber-300 hover:bg-amber-100"
+                  >
+                    <ChefHat className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    Màn Hình Bếp 👨‍🍳
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
@@ -485,6 +507,14 @@ export default function AdminTodayOrdersPage() {
               </div>
 
               <div className="flex items-center gap-1.5 flex-wrap">
+                <Button
+                  variant={selectedDate === getNearDateStr(1) ? 'default' : 'secondary'}
+                  size="sm"
+                  onClick={() => setSelectedDate(getNearDateStr(1))}
+                  className="text-xs h-8 px-3 font-medium"
+                >
+                  Ngày mai
+                </Button>
                 <Button
                   variant={selectedDate === getTodayStr() ? 'default' : 'secondary'}
                   size="sm"

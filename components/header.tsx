@@ -54,6 +54,9 @@ export function Header({ onCartClick }: HeaderProps) {
             <a href="#menu" className="text-muted-foreground hover:text-foreground transition-colors">
               Thực Đơn
             </a>
+            <a href="#debt-search" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+              Thương shop thì bấm dô 🥺
+            </a>
             <Link href="/admin" className="text-primary hover:underline font-semibold flex items-center gap-1.5">
               <LayoutDashboard className="w-4 h-4" />
               Đừng bấm vào đây 😢😢😢
@@ -117,6 +120,13 @@ export function Header({ onCartClick }: HeaderProps) {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Thực Đơn
+              </a>
+              <a
+                href="#debt-search"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Thương shop thì bấm dô 🥺
               </a>
               <Link
                 href="/admin"

@@ -64,7 +64,14 @@ export function CartSidebar({ open, onClose, onCheckout }: CartSidebarProps) {
                   key={index}
                   className="bg-card border border-border/40 rounded-2xl p-4 space-y-3 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-300"
                 >
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start justify-between gap-3">
+                    {item.menuItem.image && (
+                      <img
+                        src={item.menuItem.image}
+                        alt={item.menuItem.name}
+                        className="w-12 h-12 rounded-lg object-cover shrink-0 border border-border/40"
+                      />
+                    )}
                     <div className="flex-1">
                       <h4 className="font-semibold text-foreground">
                         {item.menuItem.name}

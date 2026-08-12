@@ -5,10 +5,14 @@ import { MenuCard } from './menu-card'
 import { CustomizeDialog } from './customize-dialog'
 import { Button } from '@/components/ui/button'
 import { foodItems, drinkItems, categories } from '@/lib/menu-data'
-import type { MenuItem } from '@/lib/types'
+import type { MenuItem, Topping } from '@/lib/types'
 import { Coffee, Sandwich } from 'lucide-react'
 
-export function MenuSection() {
+interface MenuSectionProps {
+  onBuyNow?: (item: MenuItem, toppings: Topping[], notes?: string) => void
+}
+
+export function MenuSection({ onBuyNow }: MenuSectionProps) {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
   const [customizeOpen, setCustomizeOpen] = useState(false)
@@ -19,6 +23,11 @@ export function MenuSection() {
       : foodItems.filter((item) => item.category === selectedCategory)
 
   const handleAddClick = (item: MenuItem) => {
+    setSelectedItem(item)
+    setCustomizeOpen(true)
+  }
+
+  const handleBuyNowDirect = (item: MenuItem) => {
     setSelectedItem(item)
     setCustomizeOpen(true)
   }
@@ -68,7 +77,11 @@ export function MenuSection() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredFoodItems.map((item) => (
               <div key={item.id} className="flex">
-                <MenuCard item={item} onAddClick={handleAddClick} />
+                <MenuCard
+                  item={item}
+                  onAddClick={handleAddClick}
+                  onBuyNowClick={handleBuyNowDirect}
+                />
               </div>
             ))}
           </div>
@@ -92,7 +105,12 @@ export function MenuSection() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {drinkItems.map((item) => (
               <div key={item.id} className="flex">
-                <MenuCard item={item} onAddClick={handleAddClick} isDrink />
+                <MenuCard
+                  item={item}
+                  onAddClick={handleAddClick}
+                  onBuyNowClick={handleBuyNowDirect}
+                  isDrink
+                />
               </div>
             ))}
           </div>
@@ -106,6 +124,7 @@ export function MenuSection() {
             setCustomizeOpen(false)
             setSelectedItem(null)
           }}
+          onBuyNow={onBuyNow}
         />
       </div>
     </section>

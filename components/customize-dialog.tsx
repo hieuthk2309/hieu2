@@ -1,9 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Check, X } from 'lucide-react'
+import { Check, X, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import {
   Dialog,
@@ -11,38 +10,30 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogDescription,
 } from '@/components/ui/dialog'
 import { useCart } from '@/lib/cart-context'
-import { toppings } from '@/lib/menu-data'
+import { getNextWorkingDay } from '@/lib/date-utils'
 import type { MenuItem, Topping } from '@/lib/types'
 
 interface CustomizeDialogProps {
   item: MenuItem | null
   open: boolean
   onClose: () => void
+  onBuyNow?: (item: MenuItem, toppings: Topping[], notes?: string) => void
 }
 
-export function CustomizeDialog({ item, open, onClose }: CustomizeDialogProps) {
+export function CustomizeDialog({ item, open, onClose, onBuyNow }: CustomizeDialogProps) {
   const { addItem } = useCart()
   const [selectedToppings, setSelectedToppings] = useState<Topping[]>([])
   const [notes, setNotes] = useState('')
+
+  const nextWorkingDay = getNextWorkingDay()
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
       currency: 'VND',
     }).format(price)
-  }
-
-  const handleToppingToggle = (topping: Topping) => {
-    setSelectedToppings((prev) => {
-      const exists = prev.find((t) => t.id === topping.id)
-      if (exists) {
-        return prev.filter((t) => t.id !== topping.id)
-      }
-      return [...prev, topping]
-    })
   }
 
   const calculateTotal = () => {
@@ -60,6 +51,16 @@ export function CustomizeDialog({ item, open, onClose }: CustomizeDialogProps) {
     onClose()
   }
 
+  const handleBuyNowClick = () => {
+    if (!item || !onBuyNow) return
+    const toppingsCopy = [...selectedToppings]
+    const notesCopy = notes
+    setSelectedToppings([])
+    setNotes('')
+    onClose()
+    onBuyNow(item, toppingsCopy, notesCopy)
+  }
+
   const handleClose = () => {
     setSelectedToppings([])
     setNotes('')
@@ -72,16 +73,23 @@ export function CustomizeDialog({ item, open, onClose }: CustomizeDialogProps) {
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md max-h-[90vh] flex flex-col">
         <DialogHeader className="flex-shrink-0">
-          <DialogTitle className="flex items-center gap-2">
-            <span className="text-2xl">🥖</span>
+          <DialogTitle className="flex items-center gap-2 text-xl font-bold">
+            {!item.image && <span className="text-2xl">🥖</span>}
             {item.name}
           </DialogTitle>
-          {/* <DialogDescription>
-            Tùy chỉnh số lượng và ghi chú cho món ăn của bạn
-          </DialogDescription> */}
         </DialogHeader>
 
         <div className="space-y-6 py-4 overflow-y-auto flex-1">
+          {item.image && (
+            <div className="relative h-44 rounded-xl overflow-hidden bg-muted border border-border/40 shadow-xs">
+              <img
+                src={item.image}
+                alt={item.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+
           {/* Item Info */}
           <div className="bg-muted/50 rounded-lg p-4">
             <p className="text-sm text-muted-foreground mb-2">{item.description}</p>
@@ -89,30 +97,6 @@ export function CustomizeDialog({ item, open, onClose }: CustomizeDialogProps) {
               {formatPrice(item.price)}
             </p>
           </div>
-
-          {/* Toppings */}
-          {/* <div>
-            <h4 className="font-semibold mb-3 text-foreground">Thêm Topping</h4>
-            <div className="space-y-2">
-              {toppings.map((topping) => (
-                <label
-                  key={topping.id}
-                  className="flex items-center justify-between p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors cursor-pointer"
-                >
-                  <div className="flex items-center gap-3">
-                    <Checkbox
-                      checked={selectedToppings.some((t) => t.id === topping.id)}
-                      onCheckedChange={() => handleToppingToggle(topping)}
-                    />
-                    <span className="text-sm text-foreground">{topping.name}</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    {topping.price > 0 ? `+${formatPrice(topping.price)}` : 'Miễn phí'}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </div> */}
 
           {/* Notes */}
           <div>
@@ -132,10 +116,21 @@ export function CustomizeDialog({ item, open, onClose }: CustomizeDialogProps) {
             <X className="w-4 h-4 mr-2" />
             Hủy
           </Button>
-          <Button onClick={handleAddToCart} className="w-full sm:w-auto">
+
+          <Button variant="secondary" onClick={handleAddToCart} className="w-full sm:w-auto">
             <Check className="w-4 h-4 mr-2" />
-            Thêm - {formatPrice(calculateTotal())}
+            Thêm Vào Giỏ
           </Button>
+
+          {onBuyNow && (
+            <Button
+              onClick={handleBuyNowClick}
+              className="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold"
+            >
+              <Zap className="w-4 h-4 mr-1.5 fill-current" />
+              Mua Ngay
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

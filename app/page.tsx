@@ -6,16 +6,31 @@ import { Header } from '@/components/header'
 import { HeroSection } from '@/components/hero-section'
 import { MenuSection } from '@/components/menu-section'
 import { CartSidebar } from '@/components/cart-sidebar'
-import { CheckoutDialog } from '@/components/checkout-dialog'
+import { CheckoutDialog, type BuyNowItem } from '@/components/checkout-dialog'
+import { DebtSearchSection } from '@/components/debt-search-section'
 import { Footer } from '@/components/footer'
+import type { MenuItem, Topping } from '@/lib/types'
 
 function BanhMiApp() {
   const [cartOpen, setCartOpen] = useState(false)
   const [checkoutOpen, setCheckoutOpen] = useState(false)
+  const [buyNowItem, setBuyNowItem] = useState<BuyNowItem | null>(null)
 
   const handleCheckout = () => {
+    setBuyNowItem(null)
     setCartOpen(false)
     setCheckoutOpen(true)
+  }
+
+  const handleBuyNow = (item: MenuItem, toppings: Topping[], notes?: string) => {
+    setBuyNowItem({ menuItem: item, selectedToppings: toppings, notes })
+    setCartOpen(false)
+    setCheckoutOpen(true)
+  }
+
+  const handleCloseCheckout = () => {
+    setCheckoutOpen(false)
+    setBuyNowItem(null)
   }
 
   return (
@@ -24,7 +39,8 @@ function BanhMiApp() {
       
       <main className="flex-1">
         <HeroSection />
-        <MenuSection />
+        <MenuSection onBuyNow={handleBuyNow} />
+        <DebtSearchSection />
       </main>
 
       <Footer />
@@ -37,7 +53,8 @@ function BanhMiApp() {
 
       <CheckoutDialog
         open={checkoutOpen}
-        onClose={() => setCheckoutOpen(false)}
+        onClose={handleCloseCheckout}
+        buyNowItem={buyNowItem}
       />
     </div>
   )
