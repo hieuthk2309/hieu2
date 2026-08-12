@@ -63,7 +63,7 @@ export const menuItems: MenuItem[] = [
     id: 'd4',
     name: 'Trà đường',
     description: 'Trà kozi mát lạnh kết hợp với sugar, bao ngon, bao đậm chất quê hương chủ shop jet miền tây',
-    price: 2000,
+    price: 5000,
     image: '/d4.png',
     category: 'drink',
   },
