@@ -96,16 +96,16 @@ const STATUS_LABELS: Record<string, { label: string; color: string; icon: any }>
     color: 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-950 dark:text-blue-300',
     icon: PackageCheck,
   },
-  preparing: {
-    label: 'Đang làm',
-    color: 'bg-indigo-100 text-indigo-800 border-indigo-300 dark:bg-indigo-950 dark:text-indigo-300',
-    icon: ChefHat,
-  },
-  delivering: {
-    label: 'Đang giao',
-    color: 'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-950 dark:text-purple-300',
-    icon: Truck,
-  },
+  // preparing: {
+  //   label: 'Đang làm',
+  //   color: 'bg-indigo-100 text-indigo-800 border-indigo-300 dark:bg-indigo-950 dark:text-indigo-300',
+  //   icon: ChefHat,
+  // },
+  // delivering: {
+  //   label: 'Đang giao',
+  //   color: 'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-950 dark:text-purple-300',
+  //   icon: Truck,
+  // },
   completed: {
     label: 'Hoàn thành',
     color: 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950 dark:text-emerald-300',

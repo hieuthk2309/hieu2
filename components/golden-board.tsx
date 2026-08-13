@@ -89,7 +89,7 @@ function BoardPanel({
       {/* Stats row */}
       {data && (
         <div className="grid grid-cols-2 gap-3 mb-5">
-          <div className={`bg-gradient-to-br ${statOrderGradient} border ${statOrderBorder} rounded-2xl px-4 py-3 flex items-center gap-3`}>
+          {/* <div className={`bg-gradient-to-br ${statOrderGradient} border ${statOrderBorder} rounded-2xl px-4 py-3 flex items-center gap-3`}>
             <div className="w-9 h-9 rounded-xl bg-white/40 dark:bg-black/20 flex items-center justify-center shrink-0">
               <ShoppingBag className={`w-5 h-5 ${statOrderText}`} />
             </div>
@@ -99,7 +99,7 @@ function BoardPanel({
               </p>
               <p className={`text-xs ${statOrderText} opacity-70 font-medium mt-0.5`}>{statOrderLabel}</p>
             </div>
-          </div>
+          </div> */}
           <div className={`bg-gradient-to-br ${statCustomerGradient} border ${statCustomerBorder} rounded-2xl px-4 py-3 flex items-center gap-3`}>
             <div className="w-9 h-9 rounded-xl bg-white/40 dark:bg-black/20 flex items-center justify-center shrink-0">
               <Users className={`w-5 h-5 ${statCustomerText}`} />
@@ -141,6 +141,7 @@ function BoardPanel({
         ) : (
           <ul className="divide-y divide-border">
             {data!.customers.map((customer, index) => {
+              if (index >= 5) return;
               const medal = MEDAL_CONFIG[index]
               const isTop3 = index < 5
 

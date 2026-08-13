@@ -11,11 +11,21 @@ import { DebtSearchSection } from '@/components/debt-search-section'
 import { GoldenBoard } from '@/components/golden-board'
 import { Footer } from '@/components/footer'
 import type { MenuItem, Topping } from '@/lib/types'
+import { UtensilsCrossed, Trophy, Search } from 'lucide-react'
+
+type Tab = 'menu' | 'golden' | 'debt'
+
+const TABS: { id: Tab; label: string; icon: React.ReactNode; emoji: string }[] = [
+  { id: 'menu',   label: 'Thực Đơn',     icon: <UtensilsCrossed className="w-4 h-4" />, emoji: '🥖' },
+  { id: 'golden', label: 'Bảng Vàng',    icon: <Trophy className="w-4 h-4" />,          emoji: '🏆' },
+  { id: 'debt',   label: 'Tra Cứu Công Nợ', icon: <Search className="w-4 h-4" />,       emoji: '🔍' },
+]
 
 function BanhMiApp() {
   const [cartOpen, setCartOpen] = useState(false)
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [buyNowItem, setBuyNowItem] = useState<BuyNowItem | null>(null)
+  const [activeTab, setActiveTab] = useState<Tab>('menu')
 
   const handleCheckout = () => {
     setBuyNowItem(null)
@@ -37,12 +47,50 @@ function BanhMiApp() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header onCartClick={() => setCartOpen(true)} />
-      
+
       <main className="flex-1">
         <HeroSection />
-        <GoldenBoard />
-        <MenuSection onBuyNow={handleBuyNow} />
-        <DebtSearchSection />
+
+        {/* ── Tab Bar ── */}
+        <div className="sticky top-16 z-40 bg-background/80 backdrop-blur-md border-b border-border/50">
+          <div className="container mx-auto px-4 py-2.5">
+            <nav
+              className="flex items-center gap-1 bg-muted/60 rounded-xl p-1 w-fit mx-auto shadow-inner"
+              aria-label="Điều hướng chính"
+            >
+              {TABS.map((tab) => {
+                const isActive = activeTab === tab.id
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    aria-selected={isActive}
+                    className={[
+                      'relative flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 outline-none select-none whitespace-nowrap',
+                      isActive
+                        ? 'bg-background text-primary shadow-sm ring-1 ring-border/40'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted',
+                    ].join(' ')}
+                  >
+                    <span className={`transition-transform duration-200 ${isActive ? 'scale-110' : ''}`}>
+                      {isActive
+                        ? <span className="text-sm leading-none">{tab.emoji}</span>
+                        : tab.icon}
+                    </span>
+                    <span>{tab.label}</span>
+                  </button>
+                )
+              })}
+            </nav>
+          </div>
+        </div>
+
+        {/* ── Tab Content ── */}
+        <div>
+          {activeTab === 'menu'   && <MenuSection onBuyNow={handleBuyNow} />}
+          {activeTab === 'golden' && <GoldenBoard />}
+          {activeTab === 'debt'   && <DebtSearchSection />}
+        </div>
       </main>
 
       <Footer />
