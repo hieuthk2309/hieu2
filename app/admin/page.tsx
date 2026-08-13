@@ -41,6 +41,7 @@ import {
   ShieldCheck,
   Wallet,
   Users,
+  Coffee,
 } from 'lucide-react'
 import { CustomerDebtManagement } from '@/components/customer-debt-management'
 
@@ -70,6 +71,8 @@ interface OrderWithItems {
 interface SummaryData {
   totalOrders: number
   totalRevenue: number
+  foodRevenue: number
+  drinkRevenue: number
   statusCounts: {
     pending: number
     confirmed: number
@@ -249,6 +252,7 @@ export default function AdminTodayOrdersPage() {
 
   // Auto refresh every 30s
   useEffect(() => {
+    return
     if (!autoRefresh) return
     const interval = setInterval(() => {
       fetchOrders(selectedDate, true)
@@ -434,7 +438,7 @@ export default function AdminTodayOrdersPage() {
             <div className="flex flex-wrap items-center gap-3">
               {activeTab === 'orders' && (
                 <>
-                  <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border text-sm">
+                  {/* <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border text-sm">
                     <Switch
                       id="auto-refresh"
                       checked={autoRefresh}
@@ -443,7 +447,7 @@ export default function AdminTodayOrdersPage() {
                     <label htmlFor="auto-refresh" className="cursor-pointer text-xs font-medium select-none">
                       Tự động làm mới (30s)
                     </label>
-                  </div>
+                  </div> */}
 
                   <Button
                     variant="outline"
@@ -458,33 +462,38 @@ export default function AdminTodayOrdersPage() {
                 </>
               )}
               {/* Navigation Tabs */}
-              <div className="flex items-center gap-1.5 bg-muted/60 p-1 rounded-xl border border-border">
-                <Button
-                  variant={activeTab === 'orders' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setActiveTab('orders')}
-                  className="gap-2 font-bold text-xs h-9"
-                >
-                  <Utensils className="w-4 h-4" />
-                  Đơn Hàng
-                </Button>
-                <Button
-                  variant={activeTab === 'customers' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setActiveTab('customers')}
-                  className="gap-2 font-bold text-xs h-9"
-                >
-                  <Wallet className="w-4 h-4" />
-                  Khách Hàng & Công Nợ
-                </Button>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <div className="flex items-center gap-1 bg-muted/60 p-1 rounded-xl border border-border">
+                  <Button
+                    variant={activeTab === 'orders' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setActiveTab('orders')}
+                    className="gap-1.5 font-bold text-xs h-9 px-2 sm:px-3"
+                  >
+                    <Utensils className="w-4 h-4 shrink-0" />
+                    <span className="hidden sm:inline">Đơn Hàng</span>
+                    <span className="sm:hidden">Đơn</span>
+                  </Button>
+                  <Button
+                    variant={activeTab === 'customers' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setActiveTab('customers')}
+                    className="gap-1.5 font-bold text-xs h-9 px-2 sm:px-3"
+                  >
+                    <Wallet className="w-4 h-4 shrink-0" />
+                    <span className="hidden sm:inline">Khách Hàng & Công Nợ</span>
+                    <span className="sm:hidden">Công Nợ</span>
+                  </Button>
+                </div>
                 <Link href="/kitchen">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="gap-1.5 font-bold text-xs h-9 text-amber-800 bg-amber-50 dark:bg-amber-950/40 dark:text-amber-300 border-amber-300 hover:bg-amber-100"
+                    className="gap-1.5 font-bold text-xs h-9 px-2 sm:px-3 text-amber-800 bg-amber-50 dark:bg-amber-950/40 dark:text-amber-300 border-amber-300 hover:bg-amber-100 shrink-0"
                   >
-                    <ChefHat className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                    Màn Hình Bếp 👨‍🍳
+                    <ChefHat className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                    <span className="hidden sm:inline">Màn Hình Bếp 👨‍🍳</span>
+                    <span className="sm:hidden">Bếp 👨‍🍳</span>
                   </Button>
                 </Link>
               </div>
@@ -583,46 +592,43 @@ export default function AdminTodayOrdersPage() {
             </CardContent>
           </Card>
 
-          {/* <Card className="border border-amber-200/60 dark:border-amber-900/50 bg-amber-50/40 dark:bg-amber-950/20 shadow-xs">
+          <Card className="border border-amber-200/60 dark:border-amber-900/50 bg-amber-50/40 dark:bg-amber-950/20 shadow-xs">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-amber-900 dark:text-amber-200">
-                Đơn Cần Xử Lý
+                Tổng doanh thu bánh mì
               </CardTitle>
               <div className="w-9 h-9 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-                <ChefHat className="w-5 h-5" />
+                <Utensils className="w-5 h-5" />
               </div>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-amber-700 dark:text-amber-300">
-                {(summary?.statusCounts.pending || 0) +
-                  (summary?.statusCounts.confirmed || 0) +
-                  (summary?.statusCounts.preparing || 0)}{' '}
-                đơn
+                {formatPrice(summary?.foodRevenue || 0)}
               </div>
-              <p className="text-xs text-amber-600/80 dark:text-amber-400/80 mt-1">
-                Chờ duyệt / đang làm bánh
-              </p>
+              {/* <p className="text-xs text-amber-600/80 dark:text-amber-400/80 mt-1">
+                Tổng doanh thu bánh mì
+              </p> */}
             </CardContent>
-          </Card> */}
+          </Card>
 
-          {/* <Card className="border border-purple-200/60 dark:border-purple-900/50 bg-purple-50/40 dark:bg-purple-950/20 shadow-xs">
+          <Card className="border border-purple-200/60 dark:border-purple-900/50 bg-purple-50/40 dark:bg-purple-950/20 shadow-xs">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-purple-900 dark:text-purple-200">
-                Đang Giao / Hoàn Thành
+                Tổng doanh thu nước
               </CardTitle>
               <div className="w-9 h-9 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-                <Truck className="w-5 h-5" />
+                <Coffee className="w-5 h-5" />
               </div>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">
-                {(summary?.statusCounts.delivering || 0) + (summary?.statusCounts.completed || 0)} đơn
+                {formatPrice(summary?.drinkRevenue || 0)}
               </div>
-              <p className="text-xs text-purple-600/80 dark:text-purple-400/80 mt-1">
+              {/* <p className="text-xs text-purple-600/80 dark:text-purple-400/80 mt-1">
                 Đang giao hoặc đã xong
-              </p>
+              </p> */}
             </CardContent>
-          </Card> */}
+          </Card>
         </div>
 
         {/* Filter & Search Bar */}

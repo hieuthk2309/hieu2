@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getOrdersByDateWithItems } from '@/lib/db'
+import { foodItems, drinkItems } from '@/lib/menu-data'
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,6 +10,8 @@ export async function GET(request: NextRequest) {
     const ordersData = await getOrdersByDateWithItems(dateParam)
 
     let totalRevenue = 0
+    let drinkRevenue = 0
+    let foodRevenue = 0
     const statusCounts = {
       pending: 0,
       confirmed: 0,
@@ -37,6 +40,13 @@ export async function GET(request: NextRequest) {
           quantity: existingItem.quantity + item.quantity,
           revenue: existingItem.revenue + item.subtotal,
         })
+
+        // Check if it's a drink
+        if (drinkItems.some(drink => drink.id == item.menu_item_id)) {
+          drinkRevenue += item.subtotal
+        } else if (foodItems.some(food => food.id == item.menu_item_id)) {
+          foodRevenue += item.subtotal
+        }
 
         // Summarize toppings
         if (item.toppings) {
@@ -68,6 +78,8 @@ export async function GET(request: NextRequest) {
       summary: {
         totalOrders: ordersData.length,
         totalRevenue,
+        foodRevenue,
+        drinkRevenue,
         statusCounts,
         topItems,
         topToppings,

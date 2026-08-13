@@ -212,6 +212,7 @@ export default function KitchenDisplayPage() {
 
   // Auto refresh interval (15s)
   useEffect(() => {
+    return
     if (!autoRefresh) return
     const interval = setInterval(() => {
       fetchOrders(true)

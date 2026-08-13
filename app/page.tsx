@@ -8,6 +8,7 @@ import { MenuSection } from '@/components/menu-section'
 import { CartSidebar } from '@/components/cart-sidebar'
 import { CheckoutDialog, type BuyNowItem } from '@/components/checkout-dialog'
 import { DebtSearchSection } from '@/components/debt-search-section'
+import { GoldenBoard } from '@/components/golden-board'
 import { Footer } from '@/components/footer'
 import type { MenuItem, Topping } from '@/lib/types'
 
@@ -39,6 +40,7 @@ function BanhMiApp() {
       
       <main className="flex-1">
         <HeroSection />
+        <GoldenBoard />
         <MenuSection onBuyNow={handleBuyNow} />
         <DebtSearchSection />
       </main>
