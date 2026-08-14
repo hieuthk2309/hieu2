@@ -49,7 +49,7 @@ export async function getAllCustomers(): Promise<Customer[]> {
     const { data, error } = await supabase
       .from('customers')
       .select('*')
-      .order('created_at', { ascending: false })
+      .order('debt', { ascending: false })
 
     if (!error && data) {
       return data.map(item => ({
@@ -138,6 +138,7 @@ export async function updateCustomerDebt(id: string, newDebt: number, notes?: st
   try {
     const updatePayload: Record<string, any> = { debt: cleanDebt, updated_at: now }
     if (notes !== undefined) updatePayload.notes = notes
+    if (newDebt == 0) updatePayload.notes = null
 
     const { data, error } = await supabase
       .from('customers')
@@ -197,4 +198,32 @@ export async function deleteCustomer(id: string): Promise<boolean> {
   const filtered = customers.filter(c => String(c.id) !== String(id))
   writeLocalCustomers(filtered)
   return true
+}
+
+export async function addCustomerDebt(
+  id: string,
+  amountToAdd: number,
+  notes?: string
+): Promise<Customer | null> {
+  const allCustomers = await getAllCustomers()
+  const current = allCustomers.find((c) => String(c.id) === String(id))
+  if (!current) return null
+
+  const cleanAmount = Number(amountToAdd) || 0
+  const newDebt = Math.max(0, (current.debt || 0) + cleanAmount)
+
+  let updatedNotes = current.notes || ''
+  if (notes && notes.trim()) {
+    const timestamp = new Date().toLocaleDateString('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+    const noteEntry = `[${timestamp}] ${notes.trim()}`
+    updatedNotes = updatedNotes ? `${updatedNotes}\n${noteEntry}` : noteEntry
+  }
+
+  return updateCustomerDebt(id, newDebt, updatedNotes)
 }

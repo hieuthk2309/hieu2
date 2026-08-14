@@ -36,7 +36,7 @@ export interface Customer {
   phone?: string | null
   notes?: string | null
   created_at: string
-  updated_at?: string
+  updated_at: string
 }
 
 export function CustomerDebtManagement() {
@@ -490,7 +490,7 @@ export function CustomerDebtManagement() {
                           )}
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5" />
-                            Ngày tạo: {formatDate(customer.created_at)}
+                            Ngày cập nhật: {formatDate(customer.updated_at)}
                           </span>
                           {customer.notes && (
                             <span className="flex items-center gap-1 text-amber-700 dark:text-amber-300">

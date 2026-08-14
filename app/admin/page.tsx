@@ -44,6 +44,7 @@ import {
   Coffee,
 } from 'lucide-react'
 import { CustomerDebtManagement } from '@/components/customer-debt-management'
+import { AddOrderDebtDialog } from '@/components/add-order-debt-dialog'
 
 interface OrderItemData {
   id: number
@@ -194,6 +195,17 @@ export default function AdminTodayOrdersPage() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null)
+  const [selectedOrderForDebt, setSelectedOrderForDebt] = useState<OrderData | null>(null)
+  const [debtSuccessMessage, setDebtSuccessMessage] = useState<string | null>(null)
+
+  const handleAddDebtSuccess = (updatedCustomer: any, amountAdded: number) => {
+    setDebtSuccessMessage(
+      `Đã cộng thành công ${formatPrice(amountAdded)} vào công nợ của khách hàng "${updatedCustomer.name}". Tổng nợ hiện tại: ${formatPrice(updatedCustomer.debt || 0)}.`
+    )
+    setTimeout(() => {
+      setDebtSuccessMessage(null)
+    }, 6000)
+  }
 
   // Check session on mount
   useEffect(() => {
@@ -682,6 +694,24 @@ export default function AdminTodayOrdersPage() {
             </h2>
           </div>
 
+          {/* Debt Success Alert Banner */}
+          {debtSuccessMessage && (
+            <div className="p-4 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 rounded-xl flex items-center justify-between gap-3 shadow-xs animate-in fade-in-0 duration-200">
+              <div className="flex items-center gap-2.5 text-sm font-medium">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span>{debtSuccessMessage}</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setDebtSuccessMessage(null)}
+                className="h-7 px-2 text-xs text-emerald-800 hover:bg-emerald-200/50 dark:text-emerald-300"
+              >
+                Đóng
+              </Button>
+            </div>
+          )}
+
           {isLoading ? (
             <Card className="p-12 text-center text-muted-foreground border-dashed">
               <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-3 opacity-60" />
@@ -717,7 +747,7 @@ export default function AdminTodayOrdersPage() {
                     key={order.id}
                     className="shadow-xs border-border hover:border-primary/40 transition-colors overflow-hidden"
                   >
-                    <CardHeader className="bg-muted/20 border-b border-border/60 py-3.5 px-5">
+                    <CardHeader className="bg-muted/20 border-b border-border/60 py-3 px-4 sm:py-3.5 sm:px-5">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
                           <span className="font-mono text-base font-extrabold bg-primary/10 text-primary px-2.5 py-1 rounded-md">
@@ -733,11 +763,23 @@ export default function AdminTodayOrdersPage() {
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                          <Badge className={`px-3 py-1 text-xs border font-medium flex items-center gap-1.5 ${currentStatusInfo.color}`}>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge className={`px-2.5 py-1 text-xs border font-medium flex items-center gap-1.5 ${currentStatusInfo.color}`}>
                             <StatusIcon className="w-3.5 h-3.5" />
                             {currentStatusInfo.label}
                           </Badge>
+
+                          {/* Button Cộng công nợ */}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSelectedOrderForDebt(order)}
+                            className="h-8 text-xs font-bold gap-1.5 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800 bg-indigo-50/70 hover:bg-indigo-100 hover:text-indigo-800 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/80 shadow-2xs transition-all"
+                            title="Ghi nhận công nợ đơn hàng này cho khách hàng"
+                          >
+                            <Wallet className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                            <span>Cộng công nợ</span>
+                          </Button>
 
                           {/* Quick Status Update */}
                           <Select
@@ -745,7 +787,7 @@ export default function AdminTodayOrdersPage() {
                             onValueChange={(val) => handleUpdateStatus(order.id, val)}
                             disabled={updatingOrderId === order.id}
                           >
-                            <SelectTrigger className="w-[140px] h-8 text-xs font-semibold">
+                            <SelectTrigger className="w-[130px] h-8 text-xs font-semibold">
                               <SelectValue placeholder="Đổi trạng thái" />
                             </SelectTrigger>
                             <SelectContent>
@@ -816,12 +858,24 @@ export default function AdminTodayOrdersPage() {
 
                       <Separator className="my-2" />
 
-                      {/* Total */}
-                      <div className="flex items-center justify-between pt-1">
-                        <span className="text-xs text-muted-foreground font-medium">Tổng tiền đơn hàng:</span>
-                        <span className="text-xl font-extrabold text-primary">
-                          {formatPrice(order.total)}
-                        </span>
+                      {/* Total and Action */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-muted-foreground font-medium">Tổng tiền đơn hàng:</span>
+                          <span className="text-xl font-extrabold text-primary">
+                            {formatPrice(order.total)}
+                          </span>
+                        </div>
+
+                        {/* <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setSelectedOrderForDebt(order)}
+                          className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 self-end sm:self-auto gap-1.5 h-8"
+                        >
+                          <Wallet className="w-3.5 h-3.5" />
+                          Ghi nợ đơn này
+                        </Button> */}
                       </div>
                     </CardContent>
                   </Card>
@@ -832,6 +886,14 @@ export default function AdminTodayOrdersPage() {
         </div>
       </>
     )}
+
+        {/* Modal cộng công nợ với Select2 chọn khách hàng */}
+        <AddOrderDebtDialog
+          order={selectedOrderForDebt}
+          isOpen={!!selectedOrderForDebt}
+          onClose={() => setSelectedOrderForDebt(null)}
+          onSuccess={handleAddDebtSuccess}
+        />
       </div>
     </div>
   )
