@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { CartProvider } from '@/lib/cart-context'
 import { Header } from '@/components/header'
 import { HeroSection } from '@/components/hero-section'
+import { BanhMiComboLanding } from '@/components/banh-mi-combo-landing'
 import { MenuSection } from '@/components/menu-section'
 import { CartSidebar } from '@/components/cart-sidebar'
 import { CheckoutDialog, type BuyNowItem } from '@/components/checkout-dialog'
@@ -50,7 +51,18 @@ function BanhMiApp() {
       <Header onCartClick={() => setCartOpen(true)} />
 
       <main className="flex-1">
-        <HeroSection />
+        <BanhMiComboLanding
+          bannerSrc="/banner_combo.png"
+          comboStartingPrice="35.000đ"
+          freeshipCode="FREESHIPCOMBO"
+          onOrderClick={() => {
+            setActiveTab('menu')
+            const menuEl = document.getElementById('menu')
+            if (menuEl) {
+              menuEl.scrollIntoView({ behavior: 'smooth' })
+            }
+          }}
+        />
 
         {/* ── Tab Bar ── */}
         <div className="sticky top-16 z-40 bg-background/80 backdrop-blur-md border-b border-border/50">
