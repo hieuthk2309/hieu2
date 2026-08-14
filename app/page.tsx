@@ -10,6 +10,7 @@ import { CheckoutDialog, type BuyNowItem } from '@/components/checkout-dialog'
 import { DebtSearchSection } from '@/components/debt-search-section'
 import { GoldenBoard } from '@/components/golden-board'
 import { Footer } from '@/components/footer'
+import { ChatBot } from '@/components/chatbot'
 import type { MenuItem, Topping } from '@/lib/types'
 import { UtensilsCrossed, Trophy, Search } from 'lucide-react'
 
@@ -94,6 +95,9 @@ function BanhMiApp() {
       </main>
 
       <Footer />
+
+      {/* Chatbot floating */}
+      <ChatBot />
 
       <CartSidebar
         open={cartOpen}

@@ -42,10 +42,12 @@ export async function GET(request: NextRequest) {
         })
 
         // Check if it's a drink
-        if (drinkItems.some(drink => drink.id == item.menu_item_id)) {
-          drinkRevenue += item.subtotal
-        } else if (foodItems.some(food => food.id == item.menu_item_id)) {
-          foodRevenue += item.subtotal
+        if (order.status !== 'cancelled') {
+          if (drinkItems.some(drink => drink.id == item.menu_item_id)) {
+            drinkRevenue += item.subtotal
+          } else if (foodItems.some(food => food.id == item.menu_item_id)) {
+            foodRevenue += item.subtotal
+          }
         }
 
         // Summarize toppings
