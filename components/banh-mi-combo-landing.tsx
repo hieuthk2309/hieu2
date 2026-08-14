@@ -44,7 +44,7 @@ function getCookie(name: string): string | null {
 
 export function BanhMiComboLanding({
   bannerSrc = '/banner_combo.png',
-  comboStartingPrice = '35.000đ',
+  comboStartingPrice = '19.000đ',
   freeshipCode = 'FREESHIPCOMBO',
   onOrderClick,
 }: BanhMiComboLandingProps) {
@@ -189,11 +189,11 @@ export function BanhMiComboLanding({
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-400/15 rounded-full blur-3xl pointer-events-none -translate-y-1/2" />
         <div className="absolute top-1/2 right-10 w-80 h-80 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="container mx-auto px-4 py-8 sm:py-12 lg:py-16 max-w-6xl relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+        <div className="container mx-auto px-4 py-6 sm:py-10 lg:py-12 max-w-6xl relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
             
             {/* Left Column: Headlines, Value Props & Main CTA */}
-            <div className="lg:col-span-7 space-y-5 text-center lg:text-left">
+            <div className="lg:col-span-6 space-y-4 sm:space-y-5 text-center lg:text-left">
               {/* Promo Badge */}
               <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500/15 to-orange-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold shadow-xs">
                 <Sparkles className="w-4 h-4 text-amber-500 animate-spin" style={{ animationDuration: '4s' }} />
@@ -207,27 +207,27 @@ export function BanhMiComboLanding({
 
               {/* Sub-headline */}
               <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal">
-                Bánh mì nướng nóng hổi ngập tràn nhân thịt, chả, pate béo ngậy kết hợp hoàn hảo cùng ly cà phê đậm đà hoặc trà mát lạnh sảng khoái.
+                Bánh mì nướng nóng hổi ngập tràn nhân chả cá, trứng ốp laa kết hợp hoàn hảo cùng ly cà phê gia lai đậm đà hoặc trà mát lạnh sảng khoái.
               </p>
 
               {/* Highlights Feature Pills */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 text-xs text-foreground/80 font-medium">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 text-xs text-foreground/80 font-medium">
                 <span className="flex items-center gap-1.5 bg-background/80 border border-border px-3 py-1.5 rounded-xl shadow-2xs">
                   <Clock className="w-3.5 h-3.5 text-orange-500" />
-                  Giao nhanh 15–30 phút
+                  Giao tận nơi
                 </span>
                 <span className="flex items-center gap-1.5 bg-background/80 border border-border px-3 py-1.5 rounded-xl shadow-2xs">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                  100% Nguyên liệu tươi ngon
+                  100% Tươi ngon
                 </span>
                 <span className="flex items-center gap-1.5 bg-background/80 border border-border px-3 py-1.5 rounded-xl shadow-2xs">
                   <Percent className="w-3.5 h-3.5 text-rose-500" />
-                  Tiết kiệm đến 25%
+                  Tiết kiệm
                 </span>
               </div>
 
               {/* PROMINENT CALL TO ACTION (CTA) BUTTON */}
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+              <div className="pt-1 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5">
                 <button
                   type="button"
                   onClick={handleScrollToMenu}
@@ -243,38 +243,38 @@ export function BanhMiComboLanding({
 
                 <div className="text-xs text-muted-foreground text-center sm:text-left">
                   <span className="font-bold text-foreground block">Chỉ từ {comboStartingPrice}</span>
-                  <span>Miễn phí giao hàng đơn từ 50k</span>
+                  <span>Giao hàng tận bàn với tất cả đơn hàng</span>
                 </div>
               </div>
             </div>
 
-            {/* Right Column: Hero Banner Image Card */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative mx-auto max-w-md lg:max-w-none group">
+            {/* Right Column: Hero Banner Image Card (Full Aspect Ratio 1376:768, No Cropping) */}
+            <div className="lg:col-span-6 relative">
+              <div className="relative mx-auto w-full group">
                 {/* Decorative glowing card frame */}
-                <div className="absolute -inset-1.5 bg-gradient-to-r from-amber-500 to-rose-500 rounded-3xl blur-lg opacity-30 group-hover:opacity-50 transition duration-500" />
+                <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 to-rose-500 rounded-2xl sm:rounded-3xl blur-md opacity-30 group-hover:opacity-50 transition duration-500" />
 
-                <div className="relative rounded-3xl overflow-hidden border-2 border-amber-500/20 bg-card shadow-2xl">
-                  {/* Aspect Ratio Container */}
-                  <div className="relative w-full aspect-[4/3] sm:aspect-[16/11]">
+                <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-amber-500/30 bg-card shadow-2xl">
+                  {/* Aspect Ratio 1376/768 matches exact dimensions of banner_combo.png */}
+                  <div className="relative w-full aspect-[1376/768] bg-muted/20">
                     <Image
                       src={bannerSrc}
                       alt="Combo Bánh Mì và Nước Uống Thơm Ngon"
                       fill
                       priority
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 450px"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+                      className="object-contain w-full h-full transition-transform duration-500 group-hover:scale-102"
                     />
                   </div>
 
                   {/* Floating Price Tag on top of image */}
-                  <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-slate-900/90 backdrop-blur-md border border-amber-500/40 text-white px-3.5 py-2 rounded-2xl shadow-lg flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center font-bold text-sm text-white shadow-xs">
+                  <div className="absolute bottom-2.5 right-2.5 sm:bottom-3.5 sm:right-3.5 bg-slate-900/90 backdrop-blur-md border border-amber-500/40 text-white px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl sm:rounded-2xl shadow-lg flex items-center gap-2">
+                    <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg sm:rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center font-bold text-xs text-white shadow-xs">
                       🔥
                     </div>
                     <div>
-                      <div className="text-[10px] text-amber-300 font-semibold uppercase tracking-wider">Giá ưu đãi</div>
-                      <div className="text-sm sm:text-base font-black text-white leading-none mt-0.5">
+                      <div className="text-[9px] sm:text-[10px] text-amber-300 font-semibold uppercase tracking-wider">Giá ưu đãi</div>
+                      <div className="text-xs sm:text-sm font-black text-white leading-none mt-0.5">
                         Từ {comboStartingPrice}
                       </div>
                     </div>

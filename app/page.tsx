@@ -53,7 +53,7 @@ function BanhMiApp() {
       <main className="flex-1">
         <BanhMiComboLanding
           bannerSrc="/banner_combo.png"
-          comboStartingPrice="35.000đ"
+          comboStartingPrice="19.000đ"
           freeshipCode="FREESHIPCOMBO"
           onOrderClick={() => {
             setActiveTab('menu')
