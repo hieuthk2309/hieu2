@@ -19,7 +19,7 @@ type Tab = 'menu' | 'golden' | 'debt'
 const TABS: { id: Tab; label: string; icon: React.ReactNode; emoji: string }[] = [
   { id: 'menu',   label: 'Thực Đơn',     icon: <UtensilsCrossed className="w-4 h-4" />, emoji: '🥖' },
   { id: 'golden', label: 'Bảng Vàng',    icon: <Trophy className="w-4 h-4" />,          emoji: '🏆' },
-  { id: 'debt',   label: 'Tra Cứu Công Nợ', icon: <Search className="w-4 h-4" />,       emoji: '🔍' },
+  { id: 'debt',   label: 'Công Nợ',      icon: <Search className="w-4 h-4" />,          emoji: '🔍' },
 ]
 
 function BanhMiApp() {

@@ -48,28 +48,11 @@ export function Header({ onCartClick }: HeaderProps) {
               <p className="text-xs text-muted-foreground">Ngon - Nhanh - Tiện</p>
             </div>
           </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-            <a href="#menu" className="text-muted-foreground hover:text-foreground transition-colors">
-              Thực Đơn
-            </a>
-            <a href="#debt-search" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
-              Thương shop thì bấm dô 🥺
-            </a>
+          <div className="flex items-center gap-2">
             <Link href="/admin" className="text-primary hover:underline font-semibold flex items-center gap-1.5">
               <LayoutDashboard className="w-4 h-4" />
               Đừng bấm vào đây 😢😢😢
             </Link>
-          </nav>
-
-          <div className="flex items-center gap-2">
-            {/* <Link href="/admin">
-              <Button variant="ghost" size="sm" className="hidden sm:flex text-xs font-semibold gap-1.5 text-primary bg-primary/10 hover:bg-primary/20">
-                <LayoutDashboard className="h-4 w-4" />
-                Quản lý đơn
-              </Button>
-            </Link> */}
 
             {hasOrder && (
               <Link href="/orders">
@@ -114,20 +97,6 @@ export function Header({ onCartClick }: HeaderProps) {
         {mobileMenuOpen && (
           <nav className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col gap-4 text-sm">
-              <a
-                href="#menu"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Thực Đơn
-              </a>
-              <a
-                href="#debt-search"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Thương shop thì bấm dô 🥺
-              </a>
               <Link
                 href="/admin"
                 className="text-primary font-semibold flex items-center gap-2"

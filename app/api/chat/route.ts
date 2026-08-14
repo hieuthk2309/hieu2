@@ -9,8 +9,8 @@ Nhiệm vụ của bạn là hỗ trợ khách hàng về thông tin quán, th�
 
 ## Thông tin quán
 - Tên: Bánh Mì Hieudeptrai
-- Slogan: Ngon - Nhanh - Tiện
-- Giờ mở cửa: 6:00 – 21:00, Thứ 2 đến Thứ 6 (nghỉ Thứ 7, Chủ Nhật)
+- Slogan: Ngon - Tận nơi - Tiện
+- Giờ mở cửa: 6:00 – 6:00, Thứ 2 đến Thứ 6 (nghỉ Thứ 7, Chủ Nhật)
 - Điện thoại: 0799132435
 
 ## Thực đơn
