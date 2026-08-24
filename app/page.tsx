@@ -14,7 +14,6 @@ import { Footer } from '@/components/footer'
 import { ChatBot } from '@/components/chatbot'
 import type { MenuItem, Topping } from '@/lib/types'
 import { UtensilsCrossed, Trophy, Search } from 'lucide-react'
-import { SpeedInsights } from "@vercel/speed-insights/next"
 
 type Tab = 'menu' | 'golden' | 'debt'
 
@@ -130,7 +129,6 @@ function BanhMiApp() {
 export default function Home() {
   return (
     <CartProvider>
-      <SpeedInsights />
       <BanhMiApp />
     </CartProvider>
   )

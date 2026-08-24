@@ -42,9 +42,15 @@ import {
   Wallet,
   Users,
   Coffee,
+  BarChart3,
+  Edit3,
+  Trash2,
 } from 'lucide-react'
 import { CustomerDebtManagement } from '@/components/customer-debt-management'
 import { AddOrderDebtDialog } from '@/components/add-order-debt-dialog'
+import { SalesAnalyticsDashboard } from '@/components/sales-analytics-dashboard'
+import { EditOrderDialog } from '@/components/edit-order-dialog'
+import { DeleteOrderDialog } from '@/components/delete-order-dialog'
 
 interface OrderItemData {
   id: number
@@ -97,16 +103,6 @@ const STATUS_LABELS: Record<string, { label: string; color: string; icon: any }>
     color: 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-950 dark:text-blue-300',
     icon: PackageCheck,
   },
-  // preparing: {
-  //   label: 'Đang làm',
-  //   color: 'bg-indigo-100 text-indigo-800 border-indigo-300 dark:bg-indigo-950 dark:text-indigo-300',
-  //   icon: ChefHat,
-  // },
-  // delivering: {
-  //   label: 'Đang giao',
-  //   color: 'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-950 dark:text-purple-300',
-  //   icon: Truck,
-  // },
   completed: {
     label: 'Hoàn thành',
     color: 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950 dark:text-emerald-300',
@@ -184,7 +180,7 @@ export default function AdminTodayOrdersPage() {
   const [isShaking, setIsShaking] = useState(false)
   const passwordRef = useRef<HTMLInputElement>(null)
 
-  const [activeTab, setActiveTab] = useState<'orders' | 'customers'>('orders')
+  const [activeTab, setActiveTab] = useState<'orders' | 'customers' | 'analytics'>('orders')
   const [selectedDate, setSelectedDate] = useState<string>(getTodayStr())
   const [orders, setOrders] = useState<OrderWithItems[]>([])
   const [summary, setSummary] = useState<SummaryData | null>(null)
@@ -196,7 +192,10 @@ export default function AdminTodayOrdersPage() {
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null)
   const [selectedOrderForDebt, setSelectedOrderForDebt] = useState<OrderData | null>(null)
+  const [selectedOrderForEdit, setSelectedOrderForEdit] = useState<OrderData | null>(null)
+  const [selectedOrderForDelete, setSelectedOrderForDelete] = useState<OrderData | null>(null)
   const [debtSuccessMessage, setDebtSuccessMessage] = useState<string | null>(null)
+  const [orderActionMessage, setOrderActionMessage] = useState<string | null>(null)
 
   const handleAddDebtSuccess = (updatedCustomer: any, amountAdded: number) => {
     setDebtSuccessMessage(
@@ -205,6 +204,22 @@ export default function AdminTodayOrdersPage() {
     setTimeout(() => {
       setDebtSuccessMessage(null)
     }, 6000)
+  }
+
+  const handleEditOrderSuccess = async (updatedOrder: { id: number; customer_name: string; created_at: string }) => {
+    setOrderActionMessage(`Đã cập nhật tên và ngày đặt của đơn hàng #${updatedOrder.id} thành công!`)
+    setTimeout(() => {
+      setOrderActionMessage(null)
+    }, 5000)
+    await fetchOrders(selectedDate, true)
+  }
+
+  const handleDeleteOrderSuccess = async (deletedOrderId: number) => {
+    setOrderActionMessage(`Đã xóa vĩnh viễn đơn hàng #${deletedOrderId} thành công!`)
+    setTimeout(() => {
+      setOrderActionMessage(null)
+    }, 5000)
+    await fetchOrders(selectedDate, true)
   }
 
   // Check session on mount
@@ -425,10 +440,15 @@ export default function AdminTodayOrdersPage() {
                     <Utensils className="w-8 h-8 text-primary" />
                     Quản Lý Đơn Hàng
                   </>
-                ) : (
+                ) : activeTab === 'customers' ? (
                   <>
                     <Wallet className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
                     Quản Lý Khách Hàng & Công Nợ
+                  </>
+                ) : (
+                  <>
+                    <BarChart3 className="w-8 h-8 text-primary" />
+                    Thống Kê & Phân Tích Bán Hàng
                   </>
                 )}
               </h1>
@@ -438,10 +458,15 @@ export default function AdminTodayOrdersPage() {
                     <Calendar className="w-4 h-4 text-primary" />
                     {formatSelectedDateText(selectedDate)}
                   </>
-                ) : (
+                ) : activeTab === 'customers' ? (
                   <>
                     <Users className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                     Quản lý thông tin khách hàng và số tiền công nợ
+                  </>
+                ) : (
+                  <>
+                    <BarChart3 className="w-4 h-4 text-primary" />
+                    Báo cáo doanh thu, xu hướng 10 ngày & phân tích bán hàng từ Database thật
                   </>
                 )}
               </p>
@@ -449,29 +474,16 @@ export default function AdminTodayOrdersPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               {activeTab === 'orders' && (
-                <>
-                  {/* <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border text-sm">
-                    <Switch
-                      id="auto-refresh"
-                      checked={autoRefresh}
-                      onCheckedChange={setAutoRefresh}
-                    />
-                    <label htmlFor="auto-refresh" className="cursor-pointer text-xs font-medium select-none">
-                      Tự động làm mới (30s)
-                    </label>
-                  </div> */}
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => fetchOrders(selectedDate, true)}
-                    disabled={isRefreshing}
-                    className="gap-2"
-                  >
-                    <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                    Làm mới
-                  </Button>
-                </>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fetchOrders(selectedDate, true)}
+                  disabled={isRefreshing}
+                  className="gap-2"
+                >
+                  <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  Làm mới
+                </Button>
               )}
               {/* Navigation Tabs */}
               <div className="flex flex-wrap items-center gap-1.5">
@@ -495,6 +507,16 @@ export default function AdminTodayOrdersPage() {
                     <Wallet className="w-4 h-4 shrink-0" />
                     <span className="hidden sm:inline">Khách Hàng & Công Nợ</span>
                     <span className="sm:hidden">Công Nợ</span>
+                  </Button>
+                  <Button
+                    variant={activeTab === 'analytics' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setActiveTab('analytics')}
+                    className="gap-1.5 font-bold text-xs h-9 px-2 sm:px-3"
+                  >
+                    <BarChart3 className="w-4 h-4 shrink-0" />
+                    <span className="hidden sm:inline">Thống Kê 📊</span>
+                    <span className="sm:hidden">Thống Kê</span>
                   </Button>
                 </div>
                 <Link href="/kitchen">
@@ -567,6 +589,8 @@ export default function AdminTodayOrdersPage() {
 
         {activeTab === 'customers' ? (
           <CustomerDebtManagement />
+        ) : activeTab === 'analytics' ? (
+          <SalesAnalyticsDashboard />
         ) : (
           <>
 
@@ -694,6 +718,24 @@ export default function AdminTodayOrdersPage() {
             </h2>
           </div>
 
+          {/* Order Action Alert Banner (Edit / Delete) */}
+          {orderActionMessage && (
+            <div className="p-4 bg-blue-50 dark:bg-blue-950/60 border border-blue-300 dark:border-blue-800 text-blue-900 dark:text-blue-200 rounded-xl flex items-center justify-between gap-3 shadow-xs animate-in fade-in-0 duration-200">
+              <div className="flex items-center gap-2.5 text-sm font-medium">
+                <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
+                <span>{orderActionMessage}</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setOrderActionMessage(null)}
+                className="h-7 px-2 text-xs text-blue-800 hover:bg-blue-200/50 dark:text-blue-300"
+              >
+                Đóng
+              </Button>
+            </div>
+          )}
+
           {/* Debt Success Alert Banner */}
           {debtSuccessMessage && (
             <div className="p-4 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 rounded-xl flex items-center justify-between gap-3 shadow-xs animate-in fade-in-0 duration-200">
@@ -768,6 +810,30 @@ export default function AdminTodayOrdersPage() {
                             <StatusIcon className="w-3.5 h-3.5" />
                             {currentStatusInfo.label}
                           </Badge>
+
+                          {/* Button Chỉnh sửa (Chỉ sửa Tên và Ngày đặt) */}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSelectedOrderForEdit(order)}
+                            className="h-8 text-xs font-semibold gap-1.5 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 bg-blue-50/70 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-900/80 shadow-2xs transition-all"
+                            title="Sửa tên người đặt hoặc ngày giờ đặt đơn"
+                          >
+                            <Edit3 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                            <span>Sửa</span>
+                          </Button>
+
+                          {/* Button Xóa đơn hàng */}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSelectedOrderForDelete(order)}
+                            className="h-8 text-xs font-semibold gap-1.5 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800 bg-rose-50/70 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/80 shadow-2xs transition-all"
+                            title="Xóa vĩnh viễn đơn hàng này"
+                          >
+                            <Trash2 className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
+                            <span>Xóa</span>
+                          </Button>
 
                           {/* Button Cộng công nợ */}
                           <Button
@@ -886,6 +952,22 @@ export default function AdminTodayOrdersPage() {
         </div>
       </>
     )}
+
+        {/* Modal chỉnh sửa đơn hàng (chỉ sửa Tên và Ngày đặt) */}
+        <EditOrderDialog
+          order={selectedOrderForEdit}
+          isOpen={!!selectedOrderForEdit}
+          onClose={() => setSelectedOrderForEdit(null)}
+          onSuccess={handleEditOrderSuccess}
+        />
+
+        {/* Modal xác nhận xóa đơn hàng */}
+        <DeleteOrderDialog
+          order={selectedOrderForDelete}
+          isOpen={!!selectedOrderForDelete}
+          onClose={() => setSelectedOrderForDelete(null)}
+          onSuccess={handleDeleteOrderSuccess}
+        />
 
         {/* Modal cộng công nợ với Select2 chọn khách hàng */}
         <AddOrderDebtDialog

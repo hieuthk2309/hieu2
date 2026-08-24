@@ -199,3 +199,54 @@ export async function getTodayOrdersWithItems(): Promise<{ order: OrderRow; item
   return getOrdersByDateWithItems()
 }
 
+// Update order info (strictly customer_name and created_at only)
+export async function updateOrderCustomerInfo(
+  id: number,
+  data: { customer_name?: string; created_at?: string }
+): Promise<void> {
+  const updatePayload: { customer_name?: string; created_at?: string } = {}
+
+  if (typeof data.customer_name === 'string' && data.customer_name.trim()) {
+    updatePayload.customer_name = data.customer_name.trim()
+  }
+
+  if (data.created_at) {
+    updatePayload.created_at = data.created_at
+  }
+
+  if (Object.keys(updatePayload).length === 0) {
+    return
+  }
+
+  const { error } = await supabase
+    .from('orders')
+    .update(updatePayload)
+    .eq('id', id)
+
+  if (error) throw new Error(`Lỗi cập nhật đơn hàng: ${error.message}`)
+}
+
+// Delete an order and its related items
+export async function deleteOrder(id: number): Promise<void> {
+  // First delete associated order items
+  const { error: itemsError } = await supabase
+    .from('order_items')
+    .delete()
+    .eq('order_id', id)
+
+  if (itemsError) {
+    throw new Error(`Lỗi khi xóa các món trong đơn hàng: ${itemsError.message}`)
+  }
+
+  // Then delete the order itself
+  const { error: orderError } = await supabase
+    .from('orders')
+    .delete()
+    .eq('id', id)
+
+  if (orderError) {
+    throw new Error(`Lỗi khi xóa đơn hàng: ${orderError.message}`)
+  }
+}
+
+
