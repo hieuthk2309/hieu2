@@ -39,7 +39,7 @@ import {
   type DailyOrderTrend,
   type RevenueDataPoint,
   type TopProduct,
-} from '@/data/analytics-mock-data'
+} from '@/lib/analytics-types'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
