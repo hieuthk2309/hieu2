@@ -211,17 +211,17 @@ export function EditOrderDialog({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                {/* <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5 text-primary" />
                   Giờ đặt
-                </label>
-                <Input
+                </label> */}
+                {/* <Input
                   type="time"
                   value={timeValue}
                   onChange={(e) => setTimeValue(e.target.value)}
                   className="text-sm font-medium h-10 bg-background"
                   disabled={isLoading}
-                />
+                /> */}
               </div>
             </div>
 
@@ -231,7 +231,7 @@ export function EditOrderDialog({
                 <div>
                   <span className="text-muted-foreground block text-[11px]">Tổng giá trị đơn:</span>
                   <span className="font-bold text-foreground text-sm flex items-center gap-1 mt-0.5">
-                    <DollarSign className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                    {/* <DollarSign className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> */}
                     {formatPrice(order.total)}
                   </span>
                 </div>

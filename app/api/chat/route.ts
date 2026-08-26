@@ -1,5 +1,5 @@
 import { createOpenAI } from '@ai-sdk/openai'
-import { streamText } from 'ai'
+import { generateText } from 'ai'
 
 // Remove edge runtime for better local dev compatibility + error reporting
 // export const runtime = 'edge'
@@ -59,7 +59,8 @@ export async function POST(req: Request) {
         baseURL: 'https://api.groq.com/openai/v1',
         apiKey: groqKey,
       })
-      providerModel = groq.chat('llama-3.3-70b-versatile')
+      // groq/compound-mini: model Groq gốc, không có thinking mode, phản hồi nhanh
+      providerModel = groq.chat('groq/compound-mini')
     } else if (openAiKey && !openAiKey.startsWith('vck_')) {
       const openai = createOpenAI({
         apiKey: openAiKey,
@@ -75,16 +76,26 @@ export async function POST(req: Request) {
 
     if (providerModel) {
       try {
-        const result = streamText({
+        const result = await generateText({
           model: providerModel,
           system: SYSTEM_PROMPT,
           messages,
-          maxOutputTokens: 500,
+          maxOutputTokens: 800,
           temperature: 0.7,
         })
-        return result.toTextStreamResponse()
-      } catch (streamErr) {
-        console.warn('StreamText error, falling back to local assistant:', streamErr)
+
+        const reply = result.text.trim() || generateFallbackReply(
+          messages?.slice()?.reverse()?.find((m: any) => m.role === 'user')?.content?.toLowerCase() || ''
+        )
+
+        console.log('[/api/chat] reply length:', reply.length, '| preview:', reply.slice(0, 80))
+
+        return new Response(reply, {
+          status: 200,
+          headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+        })
+      } catch (genErr) {
+        console.warn('[/api/chat] generateText error:', genErr)
       }
     }
 

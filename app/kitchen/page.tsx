@@ -644,7 +644,7 @@ export default function KitchenDisplayPage() {
                       {statusConfig.label}
                     </Badge>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">Giờ đặt: {formatTime(order.created_at)}</p>
+                  {/* <p className="text-xs text-slate-400 mt-1">Giờ đặt: {formatTime(order.created_at)}</p> */}
                 </CardHeader>
 
                 <CardContent className="p-5 space-y-3 flex-1">
@@ -686,7 +686,7 @@ export default function KitchenDisplayPage() {
                 </CardContent>
 
                 {/* Quick Kitchen Action Buttons */}
-                <div className="p-4 bg-slate-900/60 border-t border-slate-700/80 flex items-center justify-between gap-2">
+                {/* <div className="p-4 bg-slate-900/60 border-t border-slate-700/80 flex items-center justify-between gap-2">
                   {order.status !== 'preparing' && order.status !== 'completed' && order.status !== 'delivering' && (
                     <Button
                       onClick={() => handleUpdateStatus(order.id, 'preparing')}
@@ -710,7 +710,7 @@ export default function KitchenDisplayPage() {
                       <CheckCircle2 className="w-4 h-4" /> Đơn Hàng Đã Hoàn Thành
                     </div>
                   )}
-                </div>
+                </div> */}
               </Card>
             )
           })}

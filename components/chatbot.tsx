@@ -82,30 +82,18 @@ export function ChatBot() {
       }
       if (!res.body) throw new Error('No body')
 
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-      let accumulated = ''
+      const text = await res.text()
+      const accumulated = text.trim()
 
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-
-        const chunk = decoder.decode(value, { stream: true })
-        accumulated += chunk
-        setMessages(prev =>
-          prev.map(m => m.id === assistantId ? { ...m, content: accumulated } : m)
+      setMessages(prev =>
+        prev.map(m => m.id === assistantId
+          ? {
+              ...m,
+              content: accumulated || 'Xin lỗi, mình chưa nhận được phản hồi. Vui lòng thử lại!',
+            }
+          : m
         )
-      }
-
-      // If nothing came through, show fallback
-      if (!accumulated.trim()) {
-        setMessages(prev =>
-          prev.map(m => m.id === assistantId
-            ? { ...m, content: 'Xin lỗi, mình chưa nhận được phản hồi. Vui lòng thử lại!' }
-            : m
-          )
-        )
-      }
+      )
     } catch (err) {
       console.error('Chat error:', err)
       setError(true)

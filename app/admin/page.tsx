@@ -799,9 +799,9 @@ export default function AdminTodayOrdersPage() {
                             <span className="font-bold text-foreground text-base block sm:inline">
                               {order.customer_name}
                             </span>
-                            <span className="text-xs text-muted-foreground ml-0 sm:ml-2">
+                            {/* <span className="text-xs text-muted-foreground ml-0 sm:ml-2">
                               • Giờ đặt: {formatTime(order.created_at)}
-                            </span>
+                            </span> */}
                           </div>
                         </div>
 
