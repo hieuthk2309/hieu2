@@ -29,7 +29,7 @@ Nhiệm vụ của bạn là hỗ trợ khách hàng về thông tin quán, th�
 | Cà Phê Đen ⭐ | Cà phê nguyên chất pha phin truyền thống | 15.000đ |
 | Cà Phê Sữa | Cà phê đen + sữa đặc béo ngậy | 20.000đ |
 | Trà Tắc | Trà kozi + tắc chua ngọt | 10.000đ |
-| Trà Đường | Trà kozi + đường | 5.000đ |
+| Trà Đường | Trà kozi + đường | 8.000đ |
 
 ### Đặc biệt khi mua combo 1 món nước và 1 món ăn thì sẽ giảm ngay 4000đ chỉ áp dụng cho 1 món nước + 1 món ăn
 Ví dụ: khi mua 1 nước và 1 bánh mì thì sẽ giảm ngay 4000đ 
@@ -65,13 +65,13 @@ export async function POST(req: Request) {
       const openai = createOpenAI({
         apiKey: openAiKey,
       })
-      providerModel = openai('gpt-4o-mini')
+      providerModel = openai('fish-audio/s2.1-pro')
     } else if (openAiKey && openAiKey.startsWith('vck_')) {
       const openai = createOpenAI({
         baseURL: 'https://ai-gateway.vercel.sh/v1',
         apiKey: openAiKey,
       })
-      providerModel = openai('gpt-4o-mini')
+      providerModel = openai('fish-audio/s2.1-pro')
     }
 
     if (providerModel) {
@@ -87,8 +87,6 @@ export async function POST(req: Request) {
         const reply = result.text.trim() || generateFallbackReply(
           messages?.slice()?.reverse()?.find((m: any) => m.role === 'user')?.content?.toLowerCase() || ''
         )
-
-        console.log('[/api/chat] reply length:', reply.length, '| preview:', reply.slice(0, 80))
 
         return new Response(reply, {
           status: 200,
@@ -129,7 +127,7 @@ function generateFallbackReply(query: string): string {
 
 ☕ **Đồ Uống:**
 • Cà Phê Đen: 15.000đ | Cà Phê Sữa: 20.000đ
-• Trà Tắc: 10.000đ | Trà Đường: 5.000đ
+• Trà Tắc: 10.000đ | Trà Đường: 8.000đ
 
 👉 Bạn có thể chuyển sang tab **"Thực Đơn"** ở trên để chọn món và đặt hàng nhanh nhé!`
   }
